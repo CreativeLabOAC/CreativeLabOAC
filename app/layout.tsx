@@ -11,19 +11,28 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(origin),
     title: "ד״ר ליאור נוי — אינטראקציות יצירתיות",
-    description: "אב־טיפוס אינטראקטיבי לאתר האישי של ד״ר ליאור נוי.",
+    description:
+      "מחקר על תנועה משותפת, חיפוש יצירתי, אימפרוביזציה ואינטראקציות אדם–AI.",
     icons: { icon: "/favicon.svg" },
     openGraph: {
       title: "Dr. Lior Noy — Creative Interactions",
-      description: "An interactive characterization prototype for Dr. Lior Noy’s personal website.",
+      description:
+        "Researching how creativity emerges between people—and between humans and AI.",
       type: "website",
-      images: [{ url: `${origin}/og.png`, width: 1744, height: 909, alt: "Dr. Lior Noy — Creative Interactions" }],
+      images: [
+        {
+          url: `${origin}/og-v2.png`,
+          width: 1744,
+          height: 909,
+          alt: "Dr. Lior Noy — Creative Interactions",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: "Dr. Lior Noy — Creative Interactions",
-      description: "An interactive characterization prototype.",
-      images: [`${origin}/og.png`],
+      description: "Researching creativity as an interaction.",
+      images: [`${origin}/og-v2.png`],
     },
   };
 }
