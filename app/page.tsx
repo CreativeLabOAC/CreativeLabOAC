@@ -277,11 +277,13 @@ export default function Home() {
   }, [language, rtl]);
 
   useEffect(() => {
-    const pageLabel = page === "home" ? t.name : t.nav[page as keyof typeof t.nav];
+    const pageLabel = page === "home"
+      ? (rtl ? "אינטראקציות יצירתיות" : "Creative Interactions")
+      : t.nav[page as keyof typeof t.nav];
     document.title = `${pageLabel} — ${t.name}`;
     const frame = window.requestAnimationFrame(() => stageRef.current?.focus({ preventScroll: true }));
     return () => window.cancelAnimationFrame(frame);
-  }, [page, t]);
+  }, [page, rtl, t]);
 
   useEffect(() => {
     if (!studioOpen) return;
