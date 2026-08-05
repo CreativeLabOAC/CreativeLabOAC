@@ -184,6 +184,16 @@ img { display: block; width: 100%; }
 .choice-grid label>i { width:13px; height:13px; border:1px solid var(--black); border-radius:50%; position:relative; }
 .choice-grid label.selected>i::after { content:""; position:absolute; inset:3px; border-radius:50%; background:var(--black); }
 .checkbox-grid label>i { border-radius:0; }.checkbox-grid label.selected>i::after { border-radius:0; }
+.other-choice-input { width:100%; margin-top:9px; padding:14px; border:1px solid var(--black); border-radius:0; background:rgba(255,255,255,.72); color:var(--black); font-size:13px; outline:none; }
+.other-choice-input:focus { border-color:var(--accent); box-shadow:inset 3px 0 0 var(--accent); }
+[dir="rtl"] .other-choice-input:focus { box-shadow:inset -3px 0 0 var(--accent); }
+.other-sections { margin-top:18px; display:grid; gap:8px; }
+.other-section-row { display:grid; grid-template-columns:125px 1fr 36px; align-items:center; gap:10px; padding:10px 12px; border:1px dashed var(--line); background:rgba(255,255,255,.28); }
+.other-section-row label { margin:0; color:var(--gray); font:9px "Courier New",monospace; }
+.other-section-row input { min-width:0; padding:9px 0; border:0; border-bottom:1px solid var(--black); border-radius:0; background:transparent; font-size:13px; outline:none; }
+.other-section-row input:focus { border-color:var(--accent); }
+.other-section-row button { width:30px; height:30px; border:1px solid var(--line); border-radius:50%; background:transparent; cursor:pointer; color:var(--gray); }
+.other-section-row:last-child { border-color:var(--accent); }.other-section-row:last-child button { visibility:hidden; }
 .characterization-summary { position:sticky; top:132px; max-height:calc(100svh - 160px); padding:30px; overflow:auto; background:rgba(255,255,255,.78); border:1px solid var(--black); box-shadow:0 28px 80px rgba(17,17,15,.08); }
 .summary-head { display:grid; grid-template-columns:1fr auto; gap:10px; padding-bottom:24px; border-bottom:1px solid var(--black); }
 .summary-head>span,.summary-head>small { color:var(--gray); font:8px "Courier New",monospace; }
@@ -217,7 +227,7 @@ img { display: block; width: 100%; }
   .research-browser{display:block;margin-top:65px}.research-detail{margin-top:65px;padding:24px}.research-detail h2{font-size:45px}
   .publication-list{margin-top:65px}.publication{min-height:150px;grid-template-columns:45px 1fr 25px;gap:9px;padding-block:16px}.publication h2{font-size:20px}.publication small{grid-column:2}.publication i{grid-column:2}.publication em{grid-column:3;grid-row:1/4}
   .profile-layout{display:flex;flex-direction:column-reverse;margin-top:60px}.profile-photo{width:150px}.timeline>div{min-height:105px;grid-template-columns:72px 1fr}.timeline small{grid-column:2}.facts{grid-template-columns:repeat(2,1fr)}.facts>div{border-bottom:1px solid var(--line)}.external-links{margin-top:70px}
-  .characterization-hero{display:block}.characterization-hero .page-kicker{margin-bottom:44px}.characterization-title h1{font-size:clamp(52px,15vw,72px)}.characterization-title>p{font-size:15px}.characterization-layout{margin-top:65px;gap:55px}.characterization-summary{width:100%;margin:0;padding:22px;grid-row:auto}.characterization-form{gap:62px}.characterization-form legend{grid-template-columns:35px 1fr}.characterization-form legend>small{grid-column:2;margin-top:5px}.form-question{padding:27px 0}.choice-grid{grid-template-columns:1fr}.summary-actions{grid-template-columns:1fr}
+  .characterization-hero{display:block}.characterization-hero .page-kicker{margin-bottom:44px}.characterization-title h1{font-size:clamp(52px,15vw,72px)}.characterization-title>p{font-size:15px}.characterization-layout{margin-top:65px;gap:55px}.characterization-summary{width:100%;margin:0;padding:22px;grid-row:auto}.characterization-form{gap:62px}.characterization-form legend{grid-template-columns:35px 1fr}.characterization-form legend>small{grid-column:2;margin-top:5px}.form-question{padding:27px 0}.choice-grid{grid-template-columns:1fr}.other-section-row{grid-template-columns:1fr 32px}.other-section-row label{grid-column:1/-1}.summary-actions{grid-template-columns:1fr}
   .page-footer{grid-template-columns:1fr 1fr}.page-footer>span{display:none}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

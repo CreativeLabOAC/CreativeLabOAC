@@ -54,6 +54,9 @@ test("keeps routing, mobile navigation and characterization workspace safeguards
   assert.match(workspace, /lior-noy-site-characterization\.txt/);
   assert.match(workspace, /type="radio"/);
   assert.match(workspace, /type="checkbox"/);
+  assert.match(workspace, /other-choice-input/);
+  assert.match(workspace, /sectionOthers/);
+  assert.match(workspace, /updateOtherSection/);
 
   assert.match(css, /@media\(max-width:720px\)/);
   assert.match(css, /\.header nav\{position:fixed/);

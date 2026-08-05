@@ -10,22 +10,28 @@ type Depth = "concise" | "detailed";
 type Answers = {
   goal: string;
   audience: string;
+  audienceOther: string;
   action: string;
   positioning: string;
   distinction: string;
   focus: string;
+  focusOther: string;
   tone: string;
+  toneOther: string;
   depth: string;
+  depthOther: string;
   sections: string[];
+  sectionOthers: string[];
   proof: string;
   language: string;
+  languageOther: string;
   avoid: string;
   notes: string;
 };
 
 const emptyAnswers: Answers = {
-  goal: "", audience: "", action: "", positioning: "", distinction: "", focus: "",
-  tone: "", depth: "", sections: [], proof: "", language: "", avoid: "", notes: "",
+  goal: "", audience: "", audienceOther: "", action: "", positioning: "", distinction: "", focus: "", focusOther: "",
+  tone: "", toneOther: "", depth: "", depthOther: "", sections: [], sectionOthers: [], proof: "", language: "", languageOther: "", avoid: "", notes: "",
 };
 
 const content = {
@@ -81,6 +87,10 @@ const content = {
     download: "הורדת קובץ",
     reset: "איפוס השאלון",
     resetConfirm: "לאפס את כל התשובות שנשמרו במכשיר הזה?",
+    other: "אחר",
+    otherPlaceholder: "כתבו אפשרות אחרת…",
+    addOtherArea: "אזור נוסף באתר",
+    removeOther: "הסרה",
     saved: "נשמר אוטומטית",
     unanswered: "טרם נענה",
   },
@@ -136,18 +146,25 @@ const content = {
     download: "Download file",
     reset: "Reset questionnaire",
     resetConfirm: "Reset all answers saved on this device?",
+    other: "Other",
+    otherPlaceholder: "Enter another option…",
+    addOtherArea: "Another site area",
+    removeOther: "Remove",
     saved: "Saved automatically",
     unanswered: "Not answered",
   },
 } as const;
 
-function ChoiceGroup({ name, value, options, onChange }: { name: string; value: string; options: readonly (readonly [string, string])[]; onChange: (value: string) => void }) {
-  return <div className="choice-grid">{options.map(([optionValue, label]) => (
+function ChoiceGroup({ name, value, options, otherLabel, otherPlaceholder, otherValue, onChange, onOtherChange }: {
+  name: string; value: string; options: readonly (readonly [string, string])[]; otherLabel: string; otherPlaceholder: string;
+  otherValue: string; onChange: (value: string) => void; onOtherChange: (value: string) => void;
+}) {
+  return <div className="choice-wrap"><div className="choice-grid">{[...options, ["other", otherLabel] as const].map(([optionValue, label]) => (
     <label className={value === optionValue ? "selected" : ""} key={optionValue}>
       <input type="radio" name={name} value={optionValue} checked={value === optionValue} onChange={() => onChange(optionValue)} />
       <span>{label}</span><i aria-hidden="true" />
     </label>
-  ))}</div>;
+  ))}</div>{value === "other" && <input className="other-choice-input" value={otherValue} autoFocus placeholder={otherPlaceholder} aria-label={`${otherLabel} — ${name}`} onChange={(event) => onOtherChange(event.target.value)} />}</div>;
 }
 
 function TextQuestion({ id, title, help, placeholder, value, multiline = false, onChange }: {
@@ -188,12 +205,31 @@ export default function CharacterizationWorkspace({ language, onStrategyChange }
 
   const update = (key: keyof Answers, value: string | string[]) => {
     setAnswers((current) => ({ ...current, [key]: value }));
-    if (key === "audience" || key === "focus" || key === "depth") onStrategyChange(key, value as Audience | Focus | Depth);
+    if (key === "audience" && ["public", "academic", "organizations"].includes(value as string)) onStrategyChange(key, value as Audience);
+    if (key === "focus" && ["interaction", "search", "ai", "theatre"].includes(value as string)) onStrategyChange(key, value as Focus);
+    if (key === "depth" && ["concise", "detailed"].includes(value as string)) onStrategyChange(key, value as Depth);
   };
   const toggleSection = (value: string) => update("sections", answers.sections.includes(value) ? answers.sections.filter((item) => item !== value) : [...answers.sections, value]);
+  const updateOtherSection = (index: number, value: string) => {
+    const next = [...answers.sectionOthers];
+    if (index === next.length) {
+      if (value.trim()) next.push(value);
+    } else {
+      if (value.trim()) next[index] = value;
+      else next.splice(index, 1);
+    }
+    update("sectionOthers", next);
+  };
+  const removeOtherSection = (index: number) => update("sectionOthers", answers.sectionOthers.filter((_, itemIndex) => itemIndex !== index));
 
   const requiredKeys: (keyof Answers)[] = ["goal", "audience", "action", "positioning", "distinction", "focus", "tone", "depth", "sections", "proof", "language", "avoid"];
-  const completed = requiredKeys.filter((key) => Array.isArray(answers[key]) ? (answers[key] as string[]).length > 0 : Boolean(answers[key])).length;
+  const otherValueFor = (key: keyof Answers) => String(answers[`${key}Other` as keyof Answers] ?? "");
+  const completed = requiredKeys.filter((key) => {
+    if (key === "sections") return answers.sections.length > 0 || answers.sectionOthers.some((item) => item.trim());
+    const value = answers[key];
+    if (typeof value !== "string") return value.length > 0;
+    return ["audience", "focus", "tone", "depth", "language"].includes(key) && value === "other" ? Boolean(otherValueFor(key).trim()) : Boolean(value.trim());
+  }).length;
   const percentage = Math.round((completed / requiredKeys.length) * 100);
 
   const labels = useMemo(() => ({
@@ -202,10 +238,12 @@ export default function CharacterizationWorkspace({ language, onStrategyChange }
     sections: t.questions.sections[0], proof: t.questions.proof[0], language: t.questions.language[0], avoid: t.questions.avoid[0], notes: t.questions.notes[0],
   }), [t]);
   const optionSets = t.options as Record<string, readonly (readonly [string, string])[]>;
-  const optionLabel = (key: string, value: string) => optionSets[key]?.find(([id]) => id === value)?.[1] ?? value;
+  const optionLabel = (key: string, value: string) => value === "other" ? (answers[`${key}Other` as keyof Answers] as string || t.other) : optionSets[key]?.find(([id]) => id === value)?.[1] ?? value;
   const summaryLines = (Object.keys(labels) as (keyof Answers)[]).map((key) => {
     const raw = answers[key];
-    const value = Array.isArray(raw) ? raw.map((item) => optionLabel("sections", item)).join(", ") : (["audience", "focus", "tone", "depth", "language"].includes(key) ? optionLabel(key, raw) : raw);
+    const value = key === "sections"
+      ? [...answers.sections.map((item) => optionLabel("sections", item)), ...answers.sectionOthers.filter((item) => item.trim())].join(", ")
+      : Array.isArray(raw) ? raw.join(", ") : (["audience", "focus", "tone", "depth", "language"].includes(key) ? optionLabel(key, raw) : raw);
     return `${labels[key]}\n${value || t.unanswered}`;
   });
   const summary = `${t.title}\n${"=".repeat(t.title.length)}\n\n${summaryLines.join("\n\n")}`;
@@ -236,25 +274,25 @@ export default function CharacterizationWorkspace({ language, onStrategyChange }
       <form className="characterization-form" onSubmit={(event) => event.preventDefault()}>
         <fieldset><legend><span>{t.sections[0].number}</span><b>{t.sections[0].title}</b><small>{t.sections[0].subtitle}</small></legend>
           <TextQuestion id="goal" title={t.questions.goal[0]} help={t.questions.goal[1]} placeholder={t.placeholders.goal} value={answers.goal} multiline onChange={(value) => update("goal", value)} />
-          <div className="form-question"><div className="question-label"><strong>{t.questions.audience[0]}</strong><span>{t.questions.audience[1]}</span></div><ChoiceGroup name="audience" value={answers.audience} options={t.options.audience} onChange={(value) => update("audience", value)} /></div>
+          <div className="form-question"><div className="question-label"><strong>{t.questions.audience[0]}</strong><span>{t.questions.audience[1]}</span></div><ChoiceGroup name="audience" value={answers.audience} options={t.options.audience} otherLabel={t.other} otherPlaceholder={t.otherPlaceholder} otherValue={answers.audienceOther} onChange={(value) => update("audience", value)} onOtherChange={(value) => update("audienceOther", value)} /></div>
           <TextQuestion id="action" title={t.questions.action[0]} help={t.questions.action[1]} placeholder={t.placeholders.action} value={answers.action} onChange={(value) => update("action", value)} />
         </fieldset>
 
         <fieldset><legend><span>{t.sections[1].number}</span><b>{t.sections[1].title}</b><small>{t.sections[1].subtitle}</small></legend>
           <TextQuestion id="positioning" title={t.questions.positioning[0]} help={t.questions.positioning[1]} placeholder={t.placeholders.positioning} value={answers.positioning} multiline onChange={(value) => update("positioning", value)} />
           <TextQuestion id="distinction" title={t.questions.distinction[0]} help={t.questions.distinction[1]} placeholder={t.placeholders.distinction} value={answers.distinction} multiline onChange={(value) => update("distinction", value)} />
-          <div className="form-question"><div className="question-label"><strong>{t.questions.focus[0]}</strong><span>{t.questions.focus[1]}</span></div><ChoiceGroup name="focus" value={answers.focus} options={t.options.focus} onChange={(value) => update("focus", value)} /></div>
+          <div className="form-question"><div className="question-label"><strong>{t.questions.focus[0]}</strong><span>{t.questions.focus[1]}</span></div><ChoiceGroup name="focus" value={answers.focus} options={t.options.focus} otherLabel={t.other} otherPlaceholder={t.otherPlaceholder} otherValue={answers.focusOther} onChange={(value) => update("focus", value)} onOtherChange={(value) => update("focusOther", value)} /></div>
         </fieldset>
 
         <fieldset><legend><span>{t.sections[2].number}</span><b>{t.sections[2].title}</b><small>{t.sections[2].subtitle}</small></legend>
-          <div className="form-question"><div className="question-label"><strong>{t.questions.tone[0]}</strong><span>{t.questions.tone[1]}</span></div><ChoiceGroup name="tone" value={answers.tone} options={t.options.tone} onChange={(value) => update("tone", value)} /></div>
-          <div className="form-question"><div className="question-label"><strong>{t.questions.depth[0]}</strong><span>{t.questions.depth[1]}</span></div><ChoiceGroup name="depth" value={answers.depth} options={t.options.depth} onChange={(value) => update("depth", value)} /></div>
-          <div className="form-question"><div className="question-label"><strong>{t.questions.sections[0]}</strong><span>{t.questions.sections[1]}</span></div><div className="choice-grid checkbox-grid">{t.options.sections.map(([value, label]) => <label className={answers.sections.includes(value) ? "selected" : ""} key={value}><input type="checkbox" checked={answers.sections.includes(value)} onChange={() => toggleSection(value)} /><span>{label}</span><i aria-hidden="true" /></label>)}</div></div>
+          <div className="form-question"><div className="question-label"><strong>{t.questions.tone[0]}</strong><span>{t.questions.tone[1]}</span></div><ChoiceGroup name="tone" value={answers.tone} options={t.options.tone} otherLabel={t.other} otherPlaceholder={t.otherPlaceholder} otherValue={answers.toneOther} onChange={(value) => update("tone", value)} onOtherChange={(value) => update("toneOther", value)} /></div>
+          <div className="form-question"><div className="question-label"><strong>{t.questions.depth[0]}</strong><span>{t.questions.depth[1]}</span></div><ChoiceGroup name="depth" value={answers.depth} options={t.options.depth} otherLabel={t.other} otherPlaceholder={t.otherPlaceholder} otherValue={answers.depthOther} onChange={(value) => update("depth", value)} onOtherChange={(value) => update("depthOther", value)} /></div>
+          <div className="form-question"><div className="question-label"><strong>{t.questions.sections[0]}</strong><span>{t.questions.sections[1]}</span></div><div className="choice-grid checkbox-grid">{t.options.sections.map(([value, label]) => <label className={answers.sections.includes(value) ? "selected" : ""} key={value}><input type="checkbox" checked={answers.sections.includes(value)} onChange={() => toggleSection(value)} /><span>{label}</span><i aria-hidden="true" /></label>)}</div><div className="other-sections">{[...answers.sectionOthers, ""].map((value, index) => <div className="other-section-row" key={index}><label htmlFor={`other-section-${index}`}>{t.addOtherArea} {index + 1}</label><input id={`other-section-${index}`} value={value} placeholder={t.otherPlaceholder} onChange={(event) => updateOtherSection(index, event.target.value)} />{index < answers.sectionOthers.length && <button type="button" onClick={() => removeOtherSection(index)} aria-label={`${t.removeOther} ${index + 1}`}>×</button>}</div>)}</div></div>
         </fieldset>
 
         <fieldset><legend><span>{t.sections[3].number}</span><b>{t.sections[3].title}</b><small>{t.sections[3].subtitle}</small></legend>
           <TextQuestion id="proof" title={t.questions.proof[0]} help={t.questions.proof[1]} placeholder={t.placeholders.proof} value={answers.proof} multiline onChange={(value) => update("proof", value)} />
-          <div className="form-question"><div className="question-label"><strong>{t.questions.language[0]}</strong><span>{t.questions.language[1]}</span></div><ChoiceGroup name="language" value={answers.language} options={t.options.language} onChange={(value) => update("language", value)} /></div>
+          <div className="form-question"><div className="question-label"><strong>{t.questions.language[0]}</strong><span>{t.questions.language[1]}</span></div><ChoiceGroup name="language" value={answers.language} options={t.options.language} otherLabel={t.other} otherPlaceholder={t.otherPlaceholder} otherValue={answers.languageOther} onChange={(value) => update("language", value)} onOtherChange={(value) => update("languageOther", value)} /></div>
           <TextQuestion id="avoid" title={t.questions.avoid[0]} help={t.questions.avoid[1]} placeholder={t.placeholders.avoid} value={answers.avoid} multiline onChange={(value) => update("avoid", value)} />
           <TextQuestion id="notes" title={t.questions.notes[0]} help={t.questions.notes[1]} placeholder={t.placeholders.notes} value={answers.notes} multiline onChange={(value) => update("notes", value)} />
         </fieldset>
