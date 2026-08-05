@@ -19,20 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Researching how creativity emerges between people—and between humans and AI.",
       type: "website",
-      images: [
-        {
-          url: `${origin}/og-v2.png`,
-          width: 1744,
-          height: 909,
-          alt: "Dr. Lior Noy — Creative Interactions",
-        },
-      ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary",
       title: "Dr. Lior Noy — Creative Interactions",
       description: "Researching creativity as an interaction.",
-      images: [`${origin}/og-v2.png`],
     },
   };
 }
