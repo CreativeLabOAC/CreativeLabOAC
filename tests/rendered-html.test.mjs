@@ -47,6 +47,8 @@ test("keeps routing, mobile navigation and Studio safeguards in source", async (
 
   assert.match(css, /@media\(max-width:720px\)/);
   assert.match(css, /\.header nav\{position:fixed/);
+  assert.match(css, /width:100%/);
+  assert.match(css, /justify-self:stretch/);
   assert.match(css, /bottom:0/);
   assert.doesNotMatch(css, /\.header nav\{display:none\}/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
