@@ -323,6 +323,8 @@ export default function Home() {
   const pageOrder: Page[] = ["home", "about", "research", "publications", "profile"];
   const nextPage = pageOrder[Math.min(pageOrder.indexOf(page) + 1, pageOrder.length - 1)];
   const previousPage = pageOrder[Math.max(pageOrder.indexOf(page) - 1, 0)];
+  const pageIndex = pageOrder.indexOf(page);
+  const routeLabel = page === "home" ? (rtl ? "פתיחה" : "Home") : t.nav[page as keyof typeof t.nav];
 
   return (
     <main className="site" data-page={page} dir={rtl ? "rtl" : "ltr"}>
@@ -339,11 +341,18 @@ export default function Home() {
           ))}
         </nav>
         <div className="header-actions">
-          <button type="button" onClick={() => setLanguage(language === "he" ? "en" : "he")}>{rtl ? "EN" : "עב"}</button>
-          <button type="button" onClick={() => setStudioOpen(true)}>{t.characterize}</button>
+          <button type="button" className="language-toggle" aria-label={rtl ? "Switch to English" : "מעבר לעברית"} onClick={() => setLanguage(language === "he" ? "en" : "he")}>{rtl ? "EN" : "עב"}</button>
+          <button type="button" className="studio-trigger" aria-controls="characterization-studio" aria-expanded={studioOpen} onClick={() => setStudioOpen(true)}>{t.characterize}<span aria-hidden="true">+</span></button>
         </div>
       </header>
-      <div className="notice"><span>{t.notice}</span><span>SPA · HASH ROUTING · REACT</span></div>
+      <div className="notice">
+        <span>{t.notice}</span>
+        <div className="route-progress" aria-label={`${routeLabel}, ${pageIndex + 1} / ${pageOrder.length}`}>
+          <span>{String(pageIndex + 1).padStart(2, "0")} / 05</span>
+          <i aria-hidden="true"><b style={{ width: `${((pageIndex + 1) / pageOrder.length) * 100}%` }} /></i>
+          <span>{routeLabel}</span>
+        </div>
+      </div>
 
       <div className="page-stage" key={page} ref={stageRef} tabIndex={-1} aria-live="polite">
         {page === "home" && (
@@ -356,6 +365,7 @@ export default function Home() {
               <a href={hrefFor("about")} className="text-link">{t.enter} ↗</a>
             </div>
             <aside className="folio"><span>LIOR NOY</span><span>CREATIVE INTERACTIONS</span><span>ONO ACADEMIC COLLEGE</span><span>2026</span></aside>
+            <div className="interaction-axis" aria-hidden="true"><span>PEOPLE</span><i /><span>IDEAS</span><i /><span>AI</span></div>
           </section>
         )}
 
@@ -375,11 +385,11 @@ export default function Home() {
             <div className="page-title"><h1>{t.researchTitle}</h1><p>{t.researchIntro}</p></div>
             <div className="research-browser">
               <div className="research-list" role="tablist">
-                {researchItems.map((item) => <button type="button" role="tab" aria-selected={activeResearch === item.id} className={activeResearch === item.id ? "active" : ""} key={item.id} onClick={() => { setActiveResearch(item.id); setCharacterization((current) => ({ ...current, focus: item.id })); }}>
+                {researchItems.map((item) => <button type="button" role="tab" aria-controls="research-panel" aria-selected={activeResearch === item.id} className={activeResearch === item.id ? "active" : ""} key={item.id} onClick={() => { setActiveResearch(item.id); setCharacterization((current) => ({ ...current, focus: item.id })); }}>
                   <span>{item.index}</span><b>{rtl ? item.titleHe : item.titleEn}</b><i>{activeResearch === item.id ? "—" : "+"}</i>
                 </button>)}
               </div>
-              <article className="research-detail" key={currentResearch.id}>
+              <article className="research-detail" id="research-panel" role="tabpanel" key={currentResearch.id}>
                 <div className="detail-meta"><span>{currentResearch.index}</span><span>{currentResearch.years}</span></div>
                 <h2>{rtl ? currentResearch.questionHe : currentResearch.questionEn}</h2>
                 <p>{rtl ? currentResearch.textHe : currentResearch.textEn}</p>
@@ -425,14 +435,15 @@ export default function Home() {
       <footer className="page-footer">
         {page === "home" ? <span aria-hidden="true" /> : <a href={hrefFor(previousPage)}>← {t.back}</a>}
         <span>{t.name} · 2026</span>
-        {page !== "profile" ? <a href={hrefFor(nextPage)}>{t.next} ↗</a> : <button onClick={() => setStudioOpen(true)}>{t.characterize}</button>}
+        {page !== "profile" ? <a className="footer-next" href={hrefFor(nextPage)}>{t.next} <span>↗</span></a> : <button onClick={() => setStudioOpen(true)}>{t.characterize}</button>}
       </footer>
 
       {studioOpen && <>
         <div className="studio-overlay open" onClick={() => setStudioOpen(false)} />
-        <aside className="studio open" role="dialog" aria-modal="true" aria-labelledby="studio-title">
-          <div className="studio-head"><div><span>CHARACTERIZATION / 03</span><h2 id="studio-title">{t.studio.title}</h2></div><button onClick={() => setStudioOpen(false)} aria-label={t.studio.close}>×</button></div>
-          <p className="studio-intro">{t.studio.intro}</p>
+        <aside className="studio open" id="characterization-studio" role="dialog" aria-modal="true" aria-labelledby="studio-title" aria-describedby="studio-intro">
+          <div className="studio-head"><div><span>CHARACTERIZATION / 03</span><h2 id="studio-title">{t.studio.title}</h2></div><button autoFocus onClick={() => setStudioOpen(false)} aria-label={t.studio.close}>×</button></div>
+          <p className="studio-intro" id="studio-intro">{t.studio.intro}</p>
+          <div className="studio-status" aria-live="polite"><span>LIVE PREVIEW</span><i /><b>{t.studio.focusOptions[["interaction", "search", "ai", "theatre"].indexOf(characterization.focus)]}</b></div>
           <div className="studio-question"><span>01</span><h3>{t.studio.focus}</h3><OptionRow values={["interaction", "search", "ai", "theatre"] as const} labels={t.studio.focusOptions} value={characterization.focus} onChange={(value) => update("focus", value)} /></div>
           <div className="studio-question"><span>02</span><h3>{t.studio.audience}</h3><OptionRow values={["public", "academic", "organizations"] as const} labels={t.studio.audienceOptions} value={characterization.audience} onChange={(value) => update("audience", value)} /></div>
           <div className="studio-question"><span>03</span><h3>{t.studio.depth}</h3><OptionRow values={["concise", "detailed"] as const} labels={t.studio.depthOptions} value={characterization.depth} onChange={(value) => update("depth", value)} /></div>

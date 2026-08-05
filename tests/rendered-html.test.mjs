@@ -27,6 +27,8 @@ test("server-renders the Hebrew profile shell and SPA navigation", async () => {
   assert.match(html, /href="#\/publications"/);
   assert.match(html, /href="#\/profile"/);
   assert.match(html, /class="page-stage" tabindex="-1" aria-live="polite"/);
+  assert.match(html, /class="route-progress"/);
+  assert.match(html, /class="interaction-axis"/);
   assert.match(html, /lior-noy\.jpg/);
   assert.doesNotMatch(html, /role="dialog"/);
 });
@@ -44,6 +46,9 @@ test("keeps routing, mobile navigation and Studio safeguards in source", async (
   assert.match(page, /setActiveResearch\("interaction"\)/);
   assert.match(page, /href=\{hrefFor\(previousPage\)\}/);
   assert.match(page, /document\.title =/);
+  assert.match(page, /aria-controls="research-panel"/);
+  assert.match(page, /aria-controls="characterization-studio"/);
+  assert.match(page, /className="studio-status" aria-live="polite"/);
 
   assert.match(css, /@media\(max-width:720px\)/);
   assert.match(css, /\.header nav\{position:fixed/);
