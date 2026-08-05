@@ -285,9 +285,6 @@ export default function Home() {
   return (
     <main className="site" data-page={page} dir={rtl ? "rtl" : "ltr"}>
       <header className="header">
-        <a href={hrefFor("home")} className="back-mark" aria-label={t.name}>
-          <span className="mark-square" /><span className="mark-arrow">←</span>
-        </a>
         <nav aria-label={rtl ? "ניווט ראשי" : "Main navigation"}>
           {(["about", "research", "publications", "profile"] as Page[]).map((target, index) => (
             <a href={hrefFor(target)} className={page === target ? "active" : ""} aria-current={page === target ? "page" : undefined} key={target}>
