@@ -33,22 +33,27 @@ test("server-renders the Hebrew profile shell and SPA navigation", async () => {
   assert.doesNotMatch(html, /role="dialog"/);
 });
 
-test("keeps routing, mobile navigation and Studio safeguards in source", async () => {
-  const [page, css] = await Promise.all([
+test("keeps routing, mobile navigation and characterization workspace safeguards in source", async () => {
+  const [page, workspace, css] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/CharacterizationWorkspace.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
   assert.match(page, /addEventListener\("hashchange", syncRoute\)/);
   assert.match(page, /aria-current=\{page === target \? "page"/);
-  assert.match(page, /studioOpen && <>/);
-  assert.match(page, /event\.key === "Escape"/);
-  assert.match(page, /setActiveResearch\("interaction"\)/);
+  assert.match(page, /"characterize"/);
+  assert.match(page, /<CharacterizationWorkspace/);
   assert.match(page, /href=\{hrefFor\(previousPage\)\}/);
   assert.match(page, /document\.title =/);
   assert.match(page, /aria-controls="research-panel"/);
-  assert.match(page, /aria-controls="characterization-studio"/);
-  assert.match(page, /className="studio-status" aria-live="polite"/);
+
+  assert.match(workspace, /localStorage\.setItem/);
+  assert.match(workspace, /navigator\.clipboard\.writeText/);
+  assert.match(workspace, /URL\.createObjectURL/);
+  assert.match(workspace, /lior-noy-site-characterization\.txt/);
+  assert.match(workspace, /type="radio"/);
+  assert.match(workspace, /type="checkbox"/);
 
   assert.match(css, /@media\(max-width:720px\)/);
   assert.match(css, /\.header nav\{position:fixed/);
