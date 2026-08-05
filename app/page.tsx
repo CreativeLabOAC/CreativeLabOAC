@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 
 type Language = "he" | "en";
 type Page = "home" | "about" | "research" | "publications" | "profile";
@@ -249,6 +250,7 @@ export default function Home() {
   const [activeResearch, setActiveResearch] = useState<Focus>("interaction");
   const [studioOpen, setStudioOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const stageRef = useRef<HTMLDivElement>(null);
   const t = copy[language];
   const rtl = language === "he";
   const detailed = characterization.depth === "detailed";
@@ -257,7 +259,11 @@ export default function Home() {
   useEffect(() => {
     const syncRoute = () => {
       const candidate = window.location.hash.replace(/^#\/?/, "") as Page;
-      setPage(routes.includes(candidate) ? candidate : "home");
+      const validPage = routes.includes(candidate) ? candidate : "home";
+      if (window.location.hash && !routes.includes(candidate)) {
+        window.history.replaceState(null, "", "#/");
+      }
+      setPage(validPage);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
     syncRoute();
@@ -269,6 +275,27 @@ export default function Home() {
     document.documentElement.lang = language;
     document.documentElement.dir = rtl ? "rtl" : "ltr";
   }, [language, rtl]);
+
+  useEffect(() => {
+    const pageLabel = page === "home" ? t.name : t.nav[page as keyof typeof t.nav];
+    document.title = `${pageLabel} — ${t.name}`;
+    const frame = window.requestAnimationFrame(() => stageRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [page, t]);
+
+  useEffect(() => {
+    if (!studioOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setStudioOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [studioOpen]);
 
   const hrefFor = (target: Page) => target === "home" ? "#/" : `#/${target}`;
   const update = <K extends keyof Characterization>(key: K, value: Characterization[K]) => {
@@ -282,13 +309,18 @@ export default function Home() {
     return [`${t.studio.focus} ${t.studio.focusOptions[focus]}`, `${t.studio.audience} ${t.studio.audienceOptions[audience]}`, `${t.studio.depth} ${t.studio.depthOptions[depth]}`].join("\n");
   }, [characterization, t]);
   const copyDecisions = async () => {
-    await navigator.clipboard.writeText(decisionSummary);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard.writeText(decisionSummary);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
   };
 
   const pageOrder: Page[] = ["home", "about", "research", "publications", "profile"];
   const nextPage = pageOrder[Math.min(pageOrder.indexOf(page) + 1, pageOrder.length - 1)];
+  const previousPage = pageOrder[Math.max(pageOrder.indexOf(page) - 1, 0)];
 
   return (
     <main className="site" data-page={page} dir={rtl ? "rtl" : "ltr"}>
@@ -298,7 +330,7 @@ export default function Home() {
         </a>
         <nav aria-label={rtl ? "ניווט ראשי" : "Main navigation"}>
           {(["about", "research", "publications", "profile"] as Page[]).map((target, index) => (
-            <a href={hrefFor(target)} className={page === target ? "active" : ""} key={target}>
+            <a href={hrefFor(target)} className={page === target ? "active" : ""} aria-current={page === target ? "page" : undefined} key={target}>
               <span className="nav-symbol">{index === 0 ? "□" : index === 1 ? "○" : index === 2 ? "↗" : "＋"}</span>
               <span>{t.nav[target as keyof typeof t.nav]}</span>
             </a>
@@ -311,10 +343,10 @@ export default function Home() {
       </header>
       <div className="notice"><span>{t.notice}</span><span>SPA · HASH ROUTING · REACT</span></div>
 
-      <div className="page-stage" key={page}>
+      <div className="page-stage" key={page} ref={stageRef} tabIndex={-1} aria-live="polite">
         {page === "home" && (
           <section className="screen home-screen">
-            <div className="portrait"><img src="/lior-noy.jpg" alt={t.name} /></div>
+            <div className="portrait"><Image src="/lior-noy.jpg" alt={t.name} fill sizes="(max-width: 720px) 30vw, 220px" priority /></div>
             <div className="identity-block"><h1>{t.name}</h1><p>{t.role}</p></div>
             <div className="home-copy">
               <p className="lead">{t.homeLead[characterization.audience]}</p>
@@ -375,7 +407,7 @@ export default function Home() {
             <div className="page-title"><h1>{t.profileTitle}</h1></div>
             <div className="profile-layout">
               <div className="timeline">{t.positions.map(([period, position, institution]) => <div key={`${period}-${position}`}><span>{period}</span><p>{position}</p><small>{institution}</small></div>)}</div>
-              <div className="profile-photo"><img src="/lior-noy.jpg" alt={t.name} /></div>
+              <div className="profile-photo"><Image src="/lior-noy.jpg" alt={t.name} fill sizes="(max-width: 720px) 150px, 220px" /></div>
             </div>
             <div className="facts">{t.facts.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
             <div className="external-links">{[
@@ -389,20 +421,22 @@ export default function Home() {
       </div>
 
       <footer className="page-footer">
-        <a href={page === "home" ? hrefFor("home") : hrefFor("home")}>← {t.back}</a>
+        {page === "home" ? <span aria-hidden="true" /> : <a href={hrefFor(previousPage)}>← {t.back}</a>}
         <span>{t.name} · 2026</span>
         {page !== "profile" ? <a href={hrefFor(nextPage)}>{t.next} ↗</a> : <button onClick={() => setStudioOpen(true)}>{t.characterize}</button>}
       </footer>
 
-      <div className={studioOpen ? "studio-overlay open" : "studio-overlay"} onClick={() => setStudioOpen(false)} />
-      <aside className={studioOpen ? "studio open" : "studio"} aria-hidden={!studioOpen}>
-        <div className="studio-head"><div><span>CHARACTERIZATION / 03</span><h2>{t.studio.title}</h2></div><button onClick={() => setStudioOpen(false)} aria-label={t.studio.close}>×</button></div>
-        <p className="studio-intro">{t.studio.intro}</p>
-        <div className="studio-question"><span>01</span><h3>{t.studio.focus}</h3><OptionRow values={["interaction", "search", "ai", "theatre"] as const} labels={t.studio.focusOptions} value={characterization.focus} onChange={(value) => update("focus", value)} /></div>
-        <div className="studio-question"><span>02</span><h3>{t.studio.audience}</h3><OptionRow values={["public", "academic", "organizations"] as const} labels={t.studio.audienceOptions} value={characterization.audience} onChange={(value) => update("audience", value)} /></div>
-        <div className="studio-question"><span>03</span><h3>{t.studio.depth}</h3><OptionRow values={["concise", "detailed"] as const} labels={t.studio.depthOptions} value={characterization.depth} onChange={(value) => update("depth", value)} /></div>
-        <div className="studio-actions"><button onClick={copyDecisions}>{copied ? t.studio.copied : t.studio.copy}</button><button onClick={() => setCharacterization(defaultCharacterization)}>{t.studio.reset}</button></div>
-      </aside>
+      {studioOpen && <>
+        <div className="studio-overlay open" onClick={() => setStudioOpen(false)} />
+        <aside className="studio open" role="dialog" aria-modal="true" aria-labelledby="studio-title">
+          <div className="studio-head"><div><span>CHARACTERIZATION / 03</span><h2 id="studio-title">{t.studio.title}</h2></div><button onClick={() => setStudioOpen(false)} aria-label={t.studio.close}>×</button></div>
+          <p className="studio-intro">{t.studio.intro}</p>
+          <div className="studio-question"><span>01</span><h3>{t.studio.focus}</h3><OptionRow values={["interaction", "search", "ai", "theatre"] as const} labels={t.studio.focusOptions} value={characterization.focus} onChange={(value) => update("focus", value)} /></div>
+          <div className="studio-question"><span>02</span><h3>{t.studio.audience}</h3><OptionRow values={["public", "academic", "organizations"] as const} labels={t.studio.audienceOptions} value={characterization.audience} onChange={(value) => update("audience", value)} /></div>
+          <div className="studio-question"><span>03</span><h3>{t.studio.depth}</h3><OptionRow values={["concise", "detailed"] as const} labels={t.studio.depthOptions} value={characterization.depth} onChange={(value) => update("depth", value)} /></div>
+          <div className="studio-actions"><button onClick={copyDecisions}>{copied ? t.studio.copied : t.studio.copy}</button><button onClick={() => { setCharacterization(defaultCharacterization); setActiveResearch("interaction"); }}>{t.studio.reset}</button></div>
+        </aside>
+      </>}
     </main>
   );
 }
