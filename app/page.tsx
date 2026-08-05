@@ -1,6 +1,6 @@
 "use client";
 
-import { PointerEvent, useEffect, useMemo, useRef, useState } from "react";
+import { MouseEvent, PointerEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Language = "he" | "en";
 type Emphasis = "research" | "ai" | "theatre";
@@ -265,6 +265,16 @@ export default function Home() {
     window.setTimeout(() => setCopied(false), 1800);
   };
 
+  const navigateTo = (event: MouseEvent<HTMLAnchorElement>, target: string) => {
+    event.preventDefault();
+    const destination = document.querySelector<HTMLElement>(target);
+    if (!destination) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    destination.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    window.history.replaceState(null, "", target);
+  };
+
   const handleMirror = (event: PointerEvent<HTMLDivElement>) => {
     const rect = fieldRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -285,13 +295,17 @@ export default function Home() {
       <div className="prototype-strip">{t.prototype}</div>
 
       <header className="topbar">
-        <a className="wordmark" href="#top" aria-label={t.name}>
+        <a className="wordmark" href="#top" onClick={(event) => navigateTo(event, "#top")} aria-label={t.name}>
           <span className="wordmark-dot" />
           {t.name}
         </a>
         <nav aria-label={isRtl ? "ניווט ראשי" : "Main navigation"}>
           {t.nav.map((item, index) => (
-            <a key={item} href={["#research", "#projects", "#theatre", "#about"][index]}>
+            <a
+              key={item}
+              href={["#research", "#projects", "#theatre", "#about"][index]}
+              onClick={(event) => navigateTo(event, ["#research", "#projects", "#theatre", "#about"][index])}
+            >
               {item}
             </a>
           ))}
@@ -321,7 +335,11 @@ export default function Home() {
           </h1>
           <div className="hero-bottom">
             <p>{t.heroBody[config.audience]}</p>
-            <a className="arrow-link" href={config.goal === "explore" ? "#projects" : "#contact"}>
+            <a
+              className="arrow-link"
+              href={config.goal === "explore" ? "#projects" : "#contact"}
+              onClick={(event) => navigateTo(event, config.goal === "explore" ? "#projects" : "#contact")}
+            >
               {t.cta[config.goal]} <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -333,7 +351,7 @@ export default function Home() {
           </div>
           <span className="portrait-credit">PHOTO · ONO ACADEMIC COLLEGE</span>
         </div>
-        <a className="scroll-cue" href="#research">{t.scroll} ↓</a>
+        <a className="scroll-cue" href="#research" onClick={(event) => navigateTo(event, "#research")}>{t.scroll} ↓</a>
       </section>
 
       <section className="thesis section-pad" id="research">
