@@ -23,6 +23,7 @@ test("server-renders the Hebrew profile shell and SPA navigation", async () => {
   assert.match(html, /<html lang="he" dir="rtl">/);
   assert.match(html, /<title>ד״ר ליאור נוי — אינטראקציות יצירתיות<\/title>/);
   assert.match(html, /href="#\/about"/);
+  assert.match(html, /href="#\/"/);
   assert.match(html, /href="#\/research"/);
   assert.match(html, /href="#\/publications"/);
   assert.match(html, /href="#\/profile"/);

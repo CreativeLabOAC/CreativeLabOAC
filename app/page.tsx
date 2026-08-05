@@ -97,6 +97,7 @@ const copy = {
     name: "ד״ר ליאור נוי",
     role: "חוקר, מרצה ואיש אימפרוביזציה",
     nav: {
+      home: "ראשי",
       about: "אודות",
       research: "מחקר",
       publications: "פרסומים",
@@ -168,7 +169,7 @@ const copy = {
   en: {
     name: "Dr. Lior Noy",
     role: "Researcher, lecturer and improviser",
-    nav: { about: "About", research: "Research", publications: "Publications", profile: "Profile" },
+    nav: { home: "Home", about: "About", research: "Research", publications: "Publications", profile: "Profile" },
     notice: "Characterization prototype · content not yet approved",
     characterize: "Characterize",
     homeLead: {
@@ -286,9 +287,9 @@ export default function Home() {
     <main className="site" data-page={page} dir={rtl ? "rtl" : "ltr"}>
       <header className="header">
         <nav aria-label={rtl ? "ניווט ראשי" : "Main navigation"}>
-          {(["about", "research", "publications", "profile"] as Page[]).map((target, index) => (
+          {(["home", "about", "research", "publications", "profile"] as Page[]).map((target, index) => (
             <a href={hrefFor(target)} className={page === target ? "active" : ""} aria-current={page === target ? "page" : undefined} key={target}>
-              <span className="nav-symbol">{index === 0 ? "□" : index === 1 ? "○" : index === 2 ? "↗" : "＋"}</span>
+              <span className="nav-symbol">{index === 0 ? "⌂" : index === 1 ? "□" : index === 2 ? "○" : index === 3 ? "↗" : "＋"}</span>
               <span>{t.nav[target as keyof typeof t.nav]}</span>
             </a>
           ))}
