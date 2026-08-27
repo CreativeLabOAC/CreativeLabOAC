@@ -51,6 +51,9 @@ test("keeps routing, mobile navigation and characterization workspace safeguards
   assert.match(page, /document\.title =/);
   assert.match(page, /aria-controls="research-panel"/);
   assert.match(page, /Senior Lecturer/);
+  assert.match(page, /\["Paz", "Member bio pending"/);
+  assert.match(page, /\["Rani", "Member bio pending"/);
+  assert.match(page, /\["Prie", "Member bio pending"/);
   assert.doesNotMatch(page, /Deputy Head/);
   assert.doesNotMatch(page, /mailto:/);
 
