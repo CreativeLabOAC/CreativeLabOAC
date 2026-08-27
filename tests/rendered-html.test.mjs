@@ -14,19 +14,21 @@ async function render() {
   );
 }
 
-test("server-renders the Hebrew profile shell and SPA navigation", async () => {
+test("server-renders the English research shell and SPA navigation", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<html lang="he" dir="rtl">/);
-  assert.match(html, /<title>ד״ר ליאור נוי — אינטראקציות יצירתיות<\/title>/);
+  assert.match(html, /<html lang="en" dir="ltr">/);
+  assert.match(html, /<title>Dr\. Lior Noy — Creative Action Lab<\/title>/);
   assert.match(html, /href="#\/about"/);
   assert.match(html, /href="#\/"/);
   assert.match(html, /href="#\/research"/);
   assert.match(html, /href="#\/publications"/);
-  assert.match(html, /href="#\/profile"/);
+  assert.match(html, /href="#\/projects"/);
+  assert.match(html, /href="#\/lab"/);
+  assert.match(html, /href="#\/contact"/);
   assert.match(html, /class="page-stage" tabindex="-1" aria-live="polite"/);
   assert.match(html, /class="route-progress"/);
   assert.match(html, /class="interaction-axis"/);
@@ -48,6 +50,9 @@ test("keeps routing, mobile navigation and characterization workspace safeguards
   assert.match(page, /href=\{hrefFor\(previousPage\)\}/);
   assert.match(page, /document\.title =/);
   assert.match(page, /aria-controls="research-panel"/);
+  assert.match(page, /Senior Lecturer/);
+  assert.doesNotMatch(page, /Deputy Head/);
+  assert.doesNotMatch(page, /mailto:/);
 
   assert.match(workspace, /localStorage\.setItem/);
   assert.match(workspace, /navigator\.clipboard\.writeText/);

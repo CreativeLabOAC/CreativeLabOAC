@@ -10,27 +10,27 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(origin),
-    title: "ד״ר ליאור נוי — אינטראקציות יצירתיות",
+    title: "Dr. Lior Noy — Creative Action Lab",
     description:
-      "מחקר על תנועה משותפת, חיפוש יצירתי, אימפרוביזציה ואינטראקציות אדם–AI.",
+      "Creative joint action through behavioral experiments, computational models and improvisation.",
     icons: { icon: "/favicon.svg" },
     openGraph: {
-      title: "Dr. Lior Noy — Creative Interactions",
+      title: "Dr. Lior Noy — Creative Action Lab",
       description:
-        "Researching how creativity emerges between people—and between humans and AI.",
+        "Studying creative joint action through behavioral experiments, computational models and improvisation.",
       type: "website",
     },
     twitter: {
       card: "summary",
-      title: "Dr. Lior Noy — Creative Interactions",
-      description: "Researching creativity as an interaction.",
+      title: "Dr. Lior Noy — Creative Action Lab",
+      description: "A computational science of creative collaboration.",
     },
   };
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="he" dir="rtl">
+    <html lang="en" dir="ltr">
       <body>{children}</body>
     </html>
   );

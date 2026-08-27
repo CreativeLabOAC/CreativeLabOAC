@@ -5,399 +5,105 @@ import Image from "next/image";
 import CharacterizationWorkspace from "./CharacterizationWorkspace";
 
 type Language = "he" | "en";
-type Page = "home" | "about" | "research" | "publications" | "profile" | "characterize";
+type Page = "home" | "about" | "research" | "projects" | "lab" | "publications" | "contact" | "characterize";
 type Focus = "interaction" | "search" | "ai" | "theatre";
 type Audience = "public" | "academic" | "organizations";
 type Depth = "concise" | "detailed";
-
 type Characterization = { focus: Focus; audience: Audience; depth: Depth };
 
-const defaultCharacterization: Characterization = {
-  focus: "interaction",
-  audience: "public",
-  depth: "detailed",
-};
-
-const routes: Page[] = ["home", "about", "research", "publications", "profile", "characterize"];
+const defaultCharacterization: Characterization = { focus: "interaction", audience: "academic", depth: "concise" };
+const routes: Page[] = ["home", "about", "research", "projects", "lab", "publications", "contact", "characterize"];
+const sitePages: Page[] = ["home", "about", "research", "projects", "lab", "publications", "contact"];
 
 const researchItems = [
-  {
-    id: "interaction",
-    index: "01",
-    years: "2011—2024",
-    titleHe: "אינטראקציות יצירתיות",
-    titleEn: "Creative interactions",
-    questionHe: "כיצד משהו חדש נוצר בין אנשים?",
-    questionEn: "How does something new emerge between people?",
-    textHe:
-      "משחק המראה הפך אלתור גופני לפרדיגמה מדעית. שני אנשים יוצרים יחד תנועה מורכבת, מסונכרנת וחדשה ללא מנהיג מוגדר. עבודות המשך בחנו togetherness, דינמיקה פיזיולוגית ויציאה מסנכרון.",
-    textEn:
-      "The Mirror Game turned bodily improvisation into a scientific paradigm. Two people create complex, synchronized and novel movement without a designated leader. Later work studied togetherness, physiology and exits from synchrony.",
-    terms: ["Joint action", "Synchrony", "Togetherness", "De-sync"],
-    href: "https://doi.org/10.1073/pnas.1108155108",
-  },
-  {
-    id: "search",
-    index: "02",
-    years: "2017—",
-    titleHe: "חיפוש יצירתי",
-    titleEn: "Creative search",
-    questionHe: "איך אנשים נעים בתוך מרחב של אפשרויות?",
-    questionEn: "How do people move through a space of possibilities?",
-    textHe:
-      "Creative Foraging ממפה את המעבר בין exploration — חיפוש כיוונים חדשים — לבין exploitation — פיתוח רעיון שכבר נמצא. המחקר חושף אסטרטגיות חיפוש אישיות ומתאר יצירתיות כניווט בנוף משמעות.",
-    textEn:
-      "Creative Foraging maps the shift between exploration—seeking new directions—and exploitation—developing an idea already found. It reveals individual search strategies and frames creativity as navigation through a meaning landscape.",
-    terms: ["Exploration", "Exploitation", "Meaning landscape", "Discovery"],
-    href: "https://doi.org/10.1371/journal.pone.0182133",
-  },
-  {
-    id: "ai",
-    index: "03",
-    years: "2025—2026",
-    titleHe: "יצירה משותפת עם AI",
-    titleEn: "Human–AI co-creation",
-    questionHe: "האם סוכן מלאכותי יכול להיות שותף ולא רק כלי?",
-    questionEn: "Can an artificial agent become a partner rather than a tool?",
-    textHe:
-      "Playing Along בוחן סוכני AI במשחק האלתור “כן, ו…”. המחקר שואל כיצד הקשבה, הפתעה, המשכיות וקפיצות סמנטיות משתנות כאשר אדם ומכונה יוצרים יחד.",
-    textEn:
-      "Playing Along studies AI agents in the improvisation game “Yes, and…”. It asks how listening, surprise, continuation and semantic leaps change when humans and machines create together.",
-    terms: ["Human–AI", "Yes, and…", "Improvisation", "Creative agents"],
-    href: "https://idanvidra.github.io/playing_along_paper_site/",
-  },
-  {
-    id: "theatre",
-    index: "04",
-    years: "SINCE 2011",
-    titleHe: "הבמה כמעבדה",
-    titleEn: "The stage as a laboratory",
-    questionHe: "מה המדע יכול ללמוד מהידע של מאלתרים?",
-    questionEn: "What can science learn from improvisers’ knowledge?",
-    textHe:
-      "מעבדת התיאטרון במכון ויצמן חיברה בין פיזיקה, מדעי המחשב ומדעי ההתנהגות לבין אימפרוביזציה ו־Playback Theatre. משחקי במה הפכו לכלי מחקר של יחד, קפיצות יצירתיות ופעולה דרמטית.",
-    textEn:
-      "The Weizmann Theatre Lab connected physics, computer science and behavioral science with improvisation and Playback Theatre. Stage games became tools for studying togetherness, creative leaps and dramatic action.",
-    terms: ["Theatre Lab", "Playback", "Improvisation", "Embodied knowledge"],
-    href: "https://www.weizmann.ac.il/mcb/alon/theatre-lab",
-  },
+  { id: "interaction" as Focus, index: "01", titleEn: "Creative joint action", titleHe: "פעולה יצירתית משותפת", questionEn: "How do people create new patterns through interaction?", questionHe: "כיצד אנשים יוצרים דפוסים חדשים באמצעות אינטראקציה?", textEn: "Complex human interactions are distilled into controlled model systems that allow behavioral measurement, computational analysis and dynamic modeling. The Mirror Game is a central example: two people co-create synchronized, dance-like motion without a designated leader.", textHe: "אינטראקציות אנושיות מורכבות מזוקקות למערכות מודל מבוקרות שמאפשרות מדידה התנהגותית, ניתוח חישובי ומידול דינמי. משחק המראה הוא דוגמה מרכזית: שני אנשים יוצרים יחד תנועה מסונכרנת ודמוית ריקוד ללא מנהיג מוגדר.", terms: ["Joint improvisation", "Mirror Game", "Synchrony", "Togetherness"] },
+  { id: "search" as Focus, index: "02", titleEn: "Exploration & discovery", titleHe: "חיפוש וגילוי", questionEn: "What dynamics support creative exploration?", questionHe: "אילו דינמיקות תומכות בחיפוש יצירתי?", textEn: "Exploration and discovery are studied across individuals, dyads and small groups. The Creative Foraging Game turns movement through a space of ideas into measurable search behavior, connecting computational models with behavioral and cognitive science.", textHe: "תהליכי חיפוש וגילוי נחקרים אצל יחידים, זוגות וקבוצות קטנות. משחק Creative Foraging הופך תנועה במרחב רעיונות להתנהגות חיפוש מדידה ומחבר מודלים חישוביים למדעי ההתנהגות והקוגניציה.", terms: ["Creative Foraging", "Exploration", "Discovery", "Meaning landscapes"] },
+  { id: "ai" as Focus, index: "03", titleEn: "Human-agent co-creativity", titleHe: "יצירה משותפת אדם–סוכן", questionEn: "Can an artificial agent become a creative collaborator?", questionHe: "האם סוכן מלאכותי יכול להפוך לשותף יצירתי?", textEn: "Current work extends model systems of collective storytelling and creative exploration from human-human interaction to human-agent interaction, with the long-term goal of developing a computational science of creative collaboration.", textHe: "העבודה הנוכחית מרחיבה מערכות מודל של סיפור משותף וחיפוש יצירתי מאינטראקציה בין אנשים לאינטראקציה בין אדם לסוכן, במטרה ארוכת טווח לפתח מדע חישובי של שיתוף פעולה יצירתי.", terms: ["Human-agent interaction", "Collective storytelling", "Co-creativity", "Computational models"] },
+] as const;
+
+const projects = [
+  ["01", "Collective storytelling", "סיפור משותף", "Human-human → human-agent", "מאדם–אדם לאדם–סוכן", "An online setting for collecting short stories created by two agents, building toward a computational collaborator for improvised story creation.", "סביבה מקוונת לאיסוף סיפורים קצרים שנוצרים בידי שני סוכנים, בדרך לפיתוח שותף חישובי ליצירת סיפור מאולתר."],
+  ["02", "Secure attachment & improvisation", "התקשרות בטוחה ואימפרוביזציה", "Virtual Mirror Game", "משחק מראה וירטואלי", "A virtual Mirror Game is used to test how secure attachment affects collaboration and creativity.", "גרסה וירטואלית של משחק המראה משמשת לבחינת השפעתה של התקשרות בטוחה על שיתוף פעולה ויצירתיות."],
+  ["03", "Security & creativity", "ביטחון ויצירתיות", "Creative Foraging Game", "משחק Creative Foraging", "The project tests how security priming and attachment style shape creative exploration in an online model system.", "הפרויקט בוחן כיצד הטרמת ביטחון וסגנון התקשרות מעצבים חיפוש יצירתי במערכת מודל מקוונת."],
+  ["04", "Collective creative exploration", "חיפוש יצירתי משותף", "Dyads & creative agents", "זוגות וסוכנים יצירתיים", "Creative Foraging is extended to dyadic interaction to study collective creativity and develop human-agent creative collaboration.", "Creative Foraging מורחב לאינטראקציה זוגית כדי לחקור יצירתיות משותפת ולפתח שיתוף פעולה יצירתי בין אדם לסוכן."],
+  ["05", "Understanding slow motion", "הבנת תנועה איטית", "Motor control & special populations", "שליטה מוטורית ואוכלוסיות מיוחדות", "A research program on the cognitive and biomechanical limits of naturally occurring slow, smooth motion, including work with people with Parkinson’s disease.", "תוכנית מחקר על המגבלות הקוגניטיביות והביומכניות של תנועה איטית וחלקה המתרחשת באופן טבעי, כולל עבודה עם אנשים עם פרקינסון."],
+  ["06", "Online creativity games", "משחקי יצירתיות מקוונים", "Citizen science at scale", "מדע אזרחי בקנה מידה רחב", "A suite of online creative games designed to collect large-scale behavioral data and support computational models of human creativity.", "מערך משחקי יצירתיות מקוונים שנועד לאסוף נתונים התנהגותיים בקנה מידה רחב ולתמוך במודלים חישוביים של יצירתיות אנושית."],
 ] as const;
 
 const publications = [
-  ["2025", "Playing Along – Building AI Agents for Co-Creation of Improvised Stories", "ICCC", "https://idanvidra.github.io/playing_along_paper_site/"],
-  ["2024", "De-sync: The Role of Disruption of Synchronization in Creative Interactions", "BMC Neuroscience", "https://doi.org/10.1186/s12868-024-00874-z"],
-  ["2018", "Creative Exploration as a Scale-Invariant Search on a Meaning Landscape", "Nature Communications", "https://doi.org/10.1038/s41467-018-07715-8"],
-  ["2017", "Creative Foraging: An Experimental Paradigm for Studying Exploration and Discovery", "PLOS ONE", "https://doi.org/10.1371/journal.pone.0182133"],
-  ["2015", "Being in the Zone: Physiological Markers of Togetherness in Joint Improvisation", "Frontiers", "https://doi.org/10.3389/fnhum.2015.00187"],
-  ["2011", "The Mirror Game as a Paradigm for Studying the Dynamics of Two People Improvising Motion Together", "PNAS", "https://doi.org/10.1073/pnas.1108155108"],
+  ["2025", "Submovements in manual tracking: People with Parkinson’s disease produce more submovements than age-matched controls", "Journal of NeuroEngineering and Rehabilitation"],
+  ["2024", "A slow limit: Extensive motor training cannot overcome a limit on the production of slow and smooth motion", "Journal of Neurophysiology"],
+  ["2024", "De-sync: Disruption of synchronization as a key factor in individual and collective creative processes", "BMC Neuroscience"],
+  ["2018", "Creative exploration as a scale-invariant search on a meaning landscape", "Nature Communications"],
+  ["2017", "Creative foraging: An experimental paradigm for studying the dynamics of exploration and discovery", "PLOS ONE"],
+  ["2015", "Being in the zone: Physiological markers of togetherness in joint improvisation", "Frontiers in Human Neuroscience"],
+  ["2011", "The mirror game as a paradigm for studying the dynamics of two people improvising motion together", "PNAS"],
 ] as const;
 
+const people = {
+  current: [["Maor Rosenberg", "PhD research · security, collective creativity and creative exploration"], ["Daniel Khanoukov", "MA research · secure attachment and joint improvisation"]],
+  alumni: [["Idan Vidra", "MSc research · collective storytelling and human-agent interaction"], ["Gal Kimron", "MSc research · collective storytelling and human-agent interaction"]],
+  collaborators: [["Arik Shamir", "Reichman University"], ["Mario Mikulincer", "Reichman University"], ["Jason Friedman", "Tel Aviv University"], ["Kristian Tylén", "Aarhus University"], ["Robrecht van der Wel", "Rutgers University"], ["Jacob Sherson", "Aarhus University"]],
+} as const;
+
 const copy = {
-  he: {
-    name: "ד״ר ליאור נוי",
-    role: "חוקר, מרצה ואיש אימפרוביזציה",
-    nav: {
-      home: "ראשי",
-      about: "אודות",
-      research: "מחקר",
-      publications: "פרסומים",
-      profile: "פרופיל",
-    },
-    notice: "אב־טיפוס לשיחת אפיון · התוכן טרם אושר לפרסום",
-    characterize: "מצב אפיון",
-    homeLead: {
-      public: "חוקר את הרגע שבו אנשים — או אדם ומכונה — מפסיקים רק להגיב זה לזה ומתחילים ליצור משהו חדש יחד.",
-      academic: "חוקר אינטראקציות יצירתיות באמצעות כלים ממדעי המחשב, פסיכולוגיה קוגניטיבית, חקר התנועה ואמנויות הבמה.",
-      organizations: "מחקר, הוראה וסדנאות על התנאים שמאפשרים לאנשים ולצוותים להקשיב, לחפש, לאלתר וליצור יחד.",
-    },
-    homeBody: "סגן ראש בית הספר לטכנולוגיה ומדעים בקריה האקדמית אונו, בעל דוקטורט במדעי המחשב ממכון ויצמן וממייסדי מעבדת התיאטרון.",
-    enter: "היכרות עם ליאור",
-    aboutKicker: "אודות",
-    aboutTitle: "מדעי המחשב, פסיכולוגיה, תנועה ואימפרוביזציה.",
-    aboutBody:
-      "עבודתו של ד״ר ליאור נוי נעה בין דיסציפלינות שבדרך כלל אינן נפגשות. הוא משתמש בתנועה, משחקים דיגיטליים ואימפרוביזציה כדי להפוך רגעים אנושיים מורכבים למשהו שאפשר להתבונן בו, למדוד ולחקור.",
-    aboutBody2:
-      "ליאור הוא סגן ראש בית הספר לטכנולוגיה ומדעים בקריה האקדמית אונו. הוא בעל דוקטורט במדעי המחשב ממכון ויצמן, היה עמית פוסט־דוקטורט ב־Harvard Medical School, וממייסדי מעבדת התיאטרון במכון ויצמן.",
-    question: "האם אפשר לבנות תאוריה חישובית של אינטראקציות יצירתיות?",
-    values: [
-      ["הקשבה", "היכולת לזהות את מה שכבר מתרחש באינטראקציה."],
-      ["יצירתיות", "תנועה בין חיפוש אפשרויות לבין פיתוח רעיון."],
-      ["שיתוף פעולה", "יצירת תנאים שבהם החדש יכול להיווצר בין אנשים."],
-    ],
-    theatreTitle: "הבמה כמרחב מחקר",
-    theatreBody:
-      "מאז 2011, מעבדת התיאטרון במכון ויצמן משתמשת באימפרוביזציה כדי לחקור togetherness, קפיצות יצירתיות ופעולה דרמטית.",
-    researchKicker: "מחקר",
-    researchTitle: "ארבעה צירים. שאלה אחת.",
-    researchIntro: "בחרו ציר כדי לעבור בין תחומי המחקר המרכזיים.",
-    source: "למקור",
-    currentTitle: "יצירתיות אינה רק תוצאה. היא מערכת יחסים.",
-    currentBody:
-      "במחקרי אדם–AI השאלה אינה רק אם מערכת יכולה לייצר תוצר יצירתי. המחקר בוחן אם היא מסוגלת להשתתף בתהליך: להקשיב, להפתיע, להמשיך רעיון ולשנות מסלול.",
-    publicationsKicker: "פרסומים",
-    publicationsTitle: "עבודות נבחרות",
-    publicationsIntro: "בחירה מצומצמת של מאמרים ופרויקטים מרכזיים לאורך מסלול המחקר.",
-    read: "קריאה",
-    profileKicker: "פרופיל",
-    profileTitle: "מסלול אקדמי ומקצועי",
-    positions: [
-      ["היום", "סגן ראש בית הספר לטכנולוגיה ומדעים", "הקריה האקדמית אונו"],
-      ["מ־2011", "ממייסדי מעבדת התיאטרון", "מכון ויצמן למדע"],
-      ["2009—2010", "עמית פוסט־דוקטורט", "Harvard Medical School"],
-      ["2009", "Ph.D. במדעי המחשב", "מכון ויצמן למדע"],
-      ["מתמשך", "מבצע ומורה", "Playback Theatre"],
-    ],
-    facts: [["20+", "מאמרי כתב־עת מאומתים"], ["1,467", "ציטוטים ב־Google Scholar"], ["18", "h-index"], ["4", "תחומי מחקר מחוברים"]],
-    links: ["Google Scholar", "ORCID", "Theatre Lab", "יצירת קשר"],
-    back: "חזרה",
-    next: "העמוד הבא",
-    studio: {
-      title: "החלטות לאפיון",
-      intro: "הבחירות משנות את הדגש ואת עומק התוכן.",
-      focus: "מה מוביל את הסיפור?",
-      audience: "למי האתר מדבר קודם?",
-      depth: "כמה מידע להציג?",
-      focusOptions: ["אינטראקציה", "חיפוש", "אדם–AI", "תיאטרון"],
-      audienceOptions: ["ציבור רחב", "אקדמיה", "ארגונים"],
-      depthOptions: ["תמציתי", "מפורט"],
-      copy: "העתקת החלטות",
-      copied: "הועתק",
-      reset: "איפוס",
-      close: "סגירה",
-    },
-  },
   en: {
-    name: "Dr. Lior Noy",
-    role: "Researcher, lecturer and improviser",
-    nav: { home: "Home", about: "About", research: "Research", publications: "Publications", profile: "Profile" },
-    notice: "Characterization prototype · content not yet approved",
-    characterize: "Characterize",
-    homeLead: {
-      public: "Studies the moment when people—or a person and a machine—stop merely responding and begin creating something new together.",
-      academic: "Studies creative interactions using methods from computer science, cognitive psychology, movement research and the performing arts.",
-      organizations: "Research, teaching and workshops on the conditions that help people and teams listen, search, improvise and create together.",
-    },
-    homeBody: "Deputy Head of the School of Science and Technology at Ono Academic College, with a PhD in computer science from the Weizmann Institute and co-founder of the Theatre Lab.",
-    enter: "Meet Lior",
-    aboutKicker: "About",
-    aboutTitle: "Computer science, psychology, movement and improvisation.",
-    aboutBody:
-      "Dr. Lior Noy’s work moves between disciplines that rarely meet. He uses movement, digital games and improvisation to turn complex human moments into phenomena that can be observed, measured and studied.",
-    aboutBody2:
-      "Lior is Deputy Head of the School of Science and Technology at Ono Academic College. He holds a PhD in computer science from the Weizmann Institute, was a postdoctoral fellow at Harvard Medical School and co-founded the Weizmann Theatre Lab.",
-    question: "Can we build a computational theory of creative interactions?",
-    values: [
-      ["Listening", "The capacity to recognize what is already happening in an interaction."],
-      ["Creativity", "Movement between searching possibilities and developing an idea."],
-      ["Cooperation", "Creating conditions in which novelty can emerge between people."],
-    ],
-    theatreTitle: "The stage as a research space",
-    theatreBody:
-      "Since 2011, the Weizmann Theatre Lab has used improvisation to study togetherness, creative leaps and dramatic action.",
-    researchKicker: "Research",
-    researchTitle: "Four axes. One inquiry.",
-    researchIntro: "Select an axis to move between the central research areas.",
-    source: "Source",
-    currentTitle: "Creativity is not only an output. It is a relationship.",
-    currentBody:
-      "In human–AI work, the question is not merely whether a system can produce a creative result. The research asks whether it can participate in the process: listen, surprise, continue an idea and change direction.",
-    publicationsKicker: "Publications",
-    publicationsTitle: "Selected work",
-    publicationsIntro: "A concise selection of central papers and projects across the research trajectory.",
-    read: "Read",
-    profileKicker: "Profile",
-    profileTitle: "Academic and professional path",
-    positions: [
-      ["Today", "Deputy Head, School of Science and Technology", "Ono Academic College"],
-      ["Since 2011", "Co-founder, Theatre Lab", "Weizmann Institute of Science"],
-      ["2009—2010", "Postdoctoral fellow", "Harvard Medical School"],
-      ["2009", "PhD in Computer Science", "Weizmann Institute of Science"],
-      ["Ongoing", "Performer and teacher", "Playback Theatre"],
-    ],
-    facts: [["20+", "verified journal articles"], ["1,467", "Google Scholar citations"], ["18", "h-index"], ["4", "connected research areas"]],
-    links: ["Google Scholar", "ORCID", "Theatre Lab", "Contact"],
-    back: "Back",
-    next: "Next page",
-    studio: {
-      title: "Characterization decisions",
-      intro: "Choices change emphasis and content depth.",
-      focus: "What leads the story?",
-      audience: "Who does the site address first?",
-      depth: "How much information should it show?",
-      focusOptions: ["Interaction", "Search", "Human–AI", "Theatre"],
-      audienceOptions: ["General public", "Academia", "Organizations"],
-      depthOptions: ["Concise", "Detailed"],
-      copy: "Copy decisions",
-      copied: "Copied",
-      reset: "Reset",
-      close: "Close",
-    },
+    name: "Dr. Lior Noy", role: "Senior Lecturer · Creative Action Lab",
+    nav: { home: "Home", about: "About", research: "Research", projects: "Projects", lab: "Lab", publications: "Publications", contact: "Contact" }, notice: "Creative Action Lab · Ono Academic College", characterize: "Characterize",
+    homeLead: { public: "Studying how people discover new patterns through interaction.", academic: "Studying creative joint action through behavioral experiments, computational models and improvisation.", organizations: "Researching how people listen, explore and create together." },
+    homeBody: "Lior Noy, PhD, is a Senior Lecturer at Ono Academic College and leads the Creative Action Lab. His work bridges cognitive science, computer science and the performing arts.", primaryCta: "Explore the research", podcast: "Podcast in Motion", contact: "Contact",
+    aboutKicker: "About", aboutTitle: "A computational science of creative collaboration.", aboutBody: "Exploration and discovery are central to human development—from individual learning and dyadic interaction to group ideation and discoveries in science, art and technology. Lior studies the basic dynamics behind these processes by distilling complex interactions into simple experimental settings.", aboutBody2: "His approach combines behavioral and computational analysis, reductionist model systems, mixed methods and improvisation—both as a research topic and as a way of knowing.", question: "How can people—and intelligent agents—move from reacting to creating together?", values: [["Observe", "Turn complex interaction into measurable behavior."], ["Model", "Describe its dynamics computationally."], ["Improvise", "Use embodied practice to reveal joint action."]],
+    profileTitle: "Academic path", positions: [["2023—", "Senior Lecturer", "Ono Academic College · Faculty of Business Administration"], ["2023—recently", "Head, Computer Science Program", "Ono Academic College"], ["2009—2010", "Postdoctoral Fellow", "Harvard Medical School"], ["2009", "PhD in Computer Science", "Weizmann Institute of Science"], ["20 years", "Performer and teacher", "Playback Theatre"]],
+    researchKicker: "Research", researchTitle: "Creative joint action, from movement to machines.", researchIntro: "Three connected research directions, one long-term goal: a computational science of creative collaboration.",
+    projectsKicker: "Projects", projectsTitle: "Model systems for studying creativity in action.", projectsIntro: "Ongoing research described in the 2025 curriculum vitae.",
+    labKicker: "Lab", labTitle: "Research grows through collaboration.", currentStudents: "Current research students", alumni: "Alumni", collaborators: "Selected collaborators", labNote: "Additional member bios and portraits will be added once approved materials are supplied.",
+    publicationsKicker: "Publications", publicationsTitle: "Selected publications", publicationsIntro: "A concise selection from the publication record. The complete and current list is available on Google Scholar.", fullList: "Full publication list",
+    contactKicker: "Connect", contactTitle: "Read, listen, collaborate.", contactIntro: "For researchers, students and collaborators interested in creative joint action.", podcastTitle: "Podcast in Motion", podcastBody: "A dedicated listening section is part of the approved site structure. Its link and episode materials are awaiting final source material.", collaborationTitle: "Collaboration", collaborationBody: "For research collaborations, lab participation and academic workshops, contact details will be added after approval.", leadershipTitle: "Scientific leadership training", leadershipBody: "Lior is a lead trainer at HFP Consulting, facilitating leadership and management programs in academic settings and developing specialized training for listening and creativity.",
+    source: "Source", back: "Back", next: "Next page", pending: "Material pending",
+  },
+  he: {
+    name: "ד״ר ליאור נוי", role: "מרצה בכיר · Creative Action Lab",
+    nav: { home: "ראשי", about: "אודות", research: "מחקר", projects: "פרויקטים", lab: "מעבדה", publications: "פרסומים", contact: "קשר" }, notice: "Creative Action Lab · הקריה האקדמית אונו", characterize: "מצב אפיון",
+    homeLead: { public: "חוקר כיצד אנשים מגלים דפוסים חדשים באמצעות אינטראקציה.", academic: "חוקר פעולה יצירתית משותפת באמצעות ניסויים התנהגותיים, מודלים חישוביים ואימפרוביזציה.", organizations: "חוקר כיצד אנשים מקשיבים, מחפשים ויוצרים יחד." },
+    homeBody: "ד״ר ליאור נוי הוא מרצה בכיר בקריה האקדמית אונו ומוביל את Creative Action Lab. עבודתו מחברת בין מדעי הקוגניציה, מדעי המחשב ואמנויות הבמה.", primaryCta: "למחקר", podcast: "פודקאסט בתנועה", contact: "יצירת קשר",
+    aboutKicker: "אודות", aboutTitle: "מדע חישובי של שיתוף פעולה יצירתי.", aboutBody: "חיפוש וגילוי מרכזיים להתפתחות האנושית—מלמידה אישית ואינטראקציה זוגית ועד חשיבה קבוצתית וגילויים במדע, באמנות ובטכנולוגיה. ליאור חוקר את הדינמיקות הבסיסיות של תהליכים אלה באמצעות זיקוק אינטראקציות מורכבות למצבים ניסויים פשוטים.", aboutBody2: "הגישה משלבת ניתוח התנהגותי וחישובי, מערכות מודל רדוקציוניסטיות, שיטות מעורבות ואימפרוביזציה—הן כנושא מחקר והן כדרך לדעת.", question: "כיצד אנשים—וסוכנים תבוניים—עוברים מתגובה ליצירה משותפת?", values: [["התבוננות", "הפיכת אינטראקציה מורכבת להתנהגות מדידה."], ["מידול", "תיאור הדינמיקה באמצעות כלים חישוביים."], ["אימפרוביזציה", "שימוש בפרקטיקה גופנית לחשיפת פעולה משותפת."]],
+    profileTitle: "מסלול אקדמי", positions: [["מ־2023", "מרצה בכיר", "הקריה האקדמית אונו · הפקולטה למנהל עסקים"], ["2023—עד לאחרונה", "ראש תוכנית מדעי המחשב", "הקריה האקדמית אונו"], ["2009—2010", "עמית פוסט־דוקטורט", "Harvard Medical School"], ["2009", "דוקטורט במדעי המחשב", "מכון ויצמן למדע"], ["20 שנה", "מבצע ומורה", "Playback Theatre"]],
+    researchKicker: "מחקר", researchTitle: "פעולה יצירתית משותפת, מתנועה למכונות.", researchIntro: "שלושה כיווני מחקר מחוברים ומטרה ארוכת טווח אחת: מדע חישובי של שיתוף פעולה יצירתי.", projectsKicker: "פרויקטים", projectsTitle: "מערכות מודל לחקר יצירתיות בפעולה.", projectsIntro: "מחקרים פעילים המתוארים בקורות החיים לשנת 2025.",
+    labKicker: "מעבדה", labTitle: "מחקר צומח מתוך שיתוף פעולה.", currentStudents: "תלמידי מחקר כיום", alumni: "בוגרי המעבדה", collaborators: "שותפים נבחרים", labNote: "ביוגרפיות ותצלומים נוספים יתווספו לאחר אספקת חומר מאושר.",
+    publicationsKicker: "פרסומים", publicationsTitle: "פרסומים נבחרים", publicationsIntro: "בחירה תמציתית מתוך רשימת הפרסומים. הרשימה המלאה והעדכנית זמינה ב־Google Scholar.", fullList: "לרשימת הפרסומים המלאה",
+    contactKicker: "קשר", contactTitle: "לקרוא, להקשיב, לשתף פעולה.", contactIntro: "לחוקרים, סטודנטים ושותפים המתעניינים בפעולה יצירתית משותפת.", podcastTitle: "פודקאסט בתנועה", podcastBody: "אזור האזנה ייעודי הוא חלק ממבנה האתר המאושר. הקישור וחומרי הפרקים ממתינים למקור הסופי.", collaborationTitle: "שיתוף פעולה", collaborationBody: "לשיתופי פעולה מחקריים, הצטרפות למעבדה וסדנאות אקדמיות, פרטי קשר יתווספו לאחר אישור.", leadershipTitle: "הכשרת מנהיגות מדעית", leadershipBody: "ליאור הוא מנחה מוביל ב־HFP Consulting, מעביר תוכניות מנהיגות וניהול במסגרות אקדמיות ומפתח הכשרות ייעודיות להקשבה וליצירתיות.",
+    source: "מקור", back: "חזרה", next: "העמוד הבא", pending: "ממתין לחומר",
   },
 } as const;
 
 export default function Home() {
-  const [language, setLanguage] = useState<Language>("he");
+  const [language, setLanguage] = useState<Language>("en");
   const [page, setPage] = useState<Page>("home");
   const [characterization, setCharacterization] = useState(defaultCharacterization);
   const [activeResearch, setActiveResearch] = useState<Focus>("interaction");
   const stageRef = useRef<HTMLDivElement>(null);
-  const t = copy[language];
-  const rtl = language === "he";
-  const detailed = characterization.depth === "detailed";
+  const t = copy[language]; const rtl = language === "he"; const detailed = characterization.depth === "detailed";
   const currentResearch = researchItems.find((item) => item.id === activeResearch) ?? researchItems[0];
 
-  useEffect(() => {
-    const syncRoute = () => {
-      const candidate = window.location.hash.replace(/^#\/?/, "") as Page;
-      const validPage = routes.includes(candidate) ? candidate : "home";
-      if (window.location.hash && !routes.includes(candidate)) {
-        window.history.replaceState(null, "", "#/");
-      }
-      setPage(validPage);
-      window.scrollTo({ top: 0, behavior: "auto" });
-    };
-    syncRoute();
-    window.addEventListener("hashchange", syncRoute);
-    return () => window.removeEventListener("hashchange", syncRoute);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = rtl ? "rtl" : "ltr";
-  }, [language, rtl]);
-
-  useEffect(() => {
-    const pageLabel = page === "home"
-      ? (rtl ? "אינטראקציות יצירתיות" : "Creative Interactions")
-      : page === "characterize" ? t.characterize : t.nav[page as keyof typeof t.nav];
-    document.title = `${pageLabel} — ${t.name}`;
-    const frame = window.requestAnimationFrame(() => stageRef.current?.focus({ preventScroll: true }));
-    return () => window.cancelAnimationFrame(frame);
-  }, [page, rtl, t]);
-
+  useEffect(() => { const syncRoute = () => { const candidate = window.location.hash.replace(/^#\/?/, "") as Page; const validPage = routes.includes(candidate) ? candidate : "home"; if (window.location.hash && !routes.includes(candidate)) window.history.replaceState(null, "", "#/"); setPage(validPage); window.scrollTo({ top: 0, behavior: "auto" }); }; syncRoute(); window.addEventListener("hashchange", syncRoute); return () => window.removeEventListener("hashchange", syncRoute); }, []);
+  useEffect(() => { document.documentElement.lang = language; document.documentElement.dir = rtl ? "rtl" : "ltr"; }, [language, rtl]);
+  useEffect(() => { const pageLabel = page === "characterize" ? t.characterize : t.nav[page as keyof typeof t.nav]; document.title = `${pageLabel} — ${t.name}`; const frame = window.requestAnimationFrame(() => stageRef.current?.focus({ preventScroll: true })); return () => window.cancelAnimationFrame(frame); }, [page, t]);
   const hrefFor = (target: Page) => target === "home" ? "#/" : `#/${target}`;
+  const pageOrder: Page[] = [...sitePages, "characterize"]; const currentIndex = pageOrder.indexOf(page); const nextPage = pageOrder[Math.min(currentIndex + 1, pageOrder.length - 1)]; const previousPage = pageOrder[Math.max(currentIndex - 1, 0)]; const routeLabel = page === "characterize" ? t.characterize : t.nav[page as keyof typeof t.nav];
 
-  const pageOrder: Page[] = ["home", "about", "research", "publications", "profile", "characterize"];
-  const nextPage = pageOrder[Math.min(pageOrder.indexOf(page) + 1, pageOrder.length - 1)];
-  const previousPage = pageOrder[Math.max(pageOrder.indexOf(page) - 1, 0)];
-  const pageIndex = pageOrder.indexOf(page);
-  const routeLabel = page === "home" ? (rtl ? "פתיחה" : "Home") : page === "characterize" ? t.characterize : t.nav[page as keyof typeof t.nav];
-
-  return (
-    <main className="site" data-page={page} dir={rtl ? "rtl" : "ltr"}>
-      <header className="header">
-        <nav aria-label={rtl ? "ניווט ראשי" : "Main navigation"}>
-          {(["home", "about", "research", "publications", "profile"] as Page[]).map((target, index) => (
-            <a href={hrefFor(target)} className={page === target ? "active" : ""} aria-current={page === target ? "page" : undefined} key={target}>
-              <span className="nav-symbol">{index === 0 ? "⌂" : index === 1 ? "□" : index === 2 ? "○" : index === 3 ? "↗" : "＋"}</span>
-              <span>{t.nav[target as keyof typeof t.nav]}</span>
-            </a>
-          ))}
-        </nav>
-        <div className="header-actions">
-          <button type="button" className="language-toggle" aria-label={rtl ? "Switch to English" : "מעבר לעברית"} onClick={() => setLanguage(language === "he" ? "en" : "he")}>{rtl ? "EN" : "עב"}</button>
-          <a className={page === "characterize" ? "studio-trigger active" : "studio-trigger"} aria-current={page === "characterize" ? "page" : undefined} href={hrefFor("characterize")}>{t.characterize}<span aria-hidden="true">+</span></a>
-        </div>
-      </header>
-      <div className="notice">
-        <span>{t.notice}</span>
-        <div className="route-progress" aria-label={`${routeLabel}, ${pageIndex + 1} / ${pageOrder.length}`}>
-          <span>{String(pageIndex + 1).padStart(2, "0")} / 06</span>
-          <i aria-hidden="true"><b style={{ width: `${((pageIndex + 1) / pageOrder.length) * 100}%` }} /></i>
-          <span>{routeLabel}</span>
-        </div>
-      </div>
-
-      <div className="page-stage" key={page} ref={stageRef} tabIndex={-1} aria-live="polite">
-        {page === "home" && (
-          <section className="screen home-screen">
-            <div className="portrait"><Image src="/lior-noy.jpg" alt={t.name} fill sizes="(max-width: 720px) 30vw, 220px" priority /></div>
-            <div className="identity-block"><h1>{t.name}</h1><p>{t.role}</p></div>
-            <div className="home-copy">
-              <p className="lead">{t.homeLead[characterization.audience]}</p>
-              {detailed && <p>{t.homeBody}</p>}
-              <a href={hrefFor("about")} className="text-link">{t.enter} ↗</a>
-            </div>
-            <aside className="folio"><span>LIOR NOY</span><span>CREATIVE INTERACTIONS</span><span>ONO ACADEMIC COLLEGE</span><span>2026</span></aside>
-            <div className="interaction-axis" aria-hidden="true"><span>PEOPLE</span><i /><span>IDEAS</span><i /><span>AI</span></div>
-          </section>
-        )}
-
-        {page === "about" && (
-          <section className="screen content-screen about-screen">
-            <div className="page-kicker"><span>01</span><p>{t.aboutKicker}</p></div>
-            <div className="page-title"><h1>{t.aboutTitle}</h1><p>{t.aboutBody}</p>{detailed && <p>{t.aboutBody2}</p>}</div>
-            <blockquote>{t.question}</blockquote>
-            <div className="value-list">{t.values.map(([title, body], index) => <article key={title}><span>0{index + 1}</span><h2>{title}</h2><p>{body}</p></article>)}</div>
-            <div className="theatre-note"><span>THEATRE LAB · SINCE 2011</span><h2>{t.theatreTitle}</h2><p>{t.theatreBody}</p><a href="https://www.weizmann.ac.il/mcb/alon/theatre-lab" target="_blank" rel="noreferrer">{t.source} ↗</a></div>
-          </section>
-        )}
-
-        {page === "research" && (
-          <section className="screen content-screen research-screen">
-            <div className="page-kicker"><span>02</span><p>{t.researchKicker}</p></div>
-            <div className="page-title"><h1>{t.researchTitle}</h1><p>{t.researchIntro}</p></div>
-            <div className="research-browser">
-              <div className="research-list" role="tablist">
-                {researchItems.map((item) => <button type="button" role="tab" aria-controls="research-panel" aria-selected={activeResearch === item.id} className={activeResearch === item.id ? "active" : ""} key={item.id} onClick={() => { setActiveResearch(item.id); setCharacterization((current) => ({ ...current, focus: item.id })); }}>
-                  <span>{item.index}</span><b>{rtl ? item.titleHe : item.titleEn}</b><i>{activeResearch === item.id ? "—" : "+"}</i>
-                </button>)}
-              </div>
-              <article className="research-detail" id="research-panel" role="tabpanel" key={currentResearch.id}>
-                <div className="detail-meta"><span>{currentResearch.index}</span><span>{currentResearch.years}</span></div>
-                <h2>{rtl ? currentResearch.questionHe : currentResearch.questionEn}</h2>
-                <p>{rtl ? currentResearch.textHe : currentResearch.textEn}</p>
-                <ul>{currentResearch.terms.map((term) => <li key={term}>{term}</li>)}</ul>
-                <a href={currentResearch.href} target="_blank" rel="noreferrer">{t.source} ↗</a>
-              </article>
-            </div>
-            <div className="current-note"><span>HUMAN — AI</span><h2>{t.currentTitle}</h2><p>{t.currentBody}</p></div>
-          </section>
-        )}
-
-        {page === "publications" && (
-          <section className="screen content-screen publications-screen">
-            <div className="page-kicker"><span>03</span><p>{t.publicationsKicker}</p></div>
-            <div className="page-title"><h1>{t.publicationsTitle}</h1><p>{t.publicationsIntro}</p></div>
-            <div className="publication-list">
-              {publications.map(([year, title, venue, href], index) => <a href={href} target="_blank" rel="noreferrer" className="publication" key={title}>
-                <span>{year}</span><h2>{title}</h2><small>{venue}</small><i>{t.read} ↗</i><em>0{index + 1}</em>
-              </a>)}
-            </div>
-          </section>
-        )}
-
-        {page === "profile" && (
-          <section className="screen content-screen profile-screen">
-            <div className="page-kicker"><span>04</span><p>{t.profileKicker}</p></div>
-            <div className="page-title"><h1>{t.profileTitle}</h1></div>
-            <div className="profile-layout">
-              <div className="timeline">{t.positions.map(([period, position, institution]) => <div key={`${period}-${position}`}><span>{period}</span><p>{position}</p><small>{institution}</small></div>)}</div>
-              <div className="profile-photo"><Image src="/lior-noy.jpg" alt={t.name} fill sizes="(max-width: 720px) 150px, 220px" /></div>
-            </div>
-            <div className="facts">{t.facts.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
-            <div className="external-links">{[
-              ["https://scholar.google.com/citations?user=-w05QJkAAAAJ&hl=en", t.links[0]],
-              ["https://orcid.org/0000-0001-8505-3889", t.links[1]],
-              ["https://www.weizmann.ac.il/mcb/alon/theatre-lab", t.links[2]],
-              ["mailto:lior.noy.1@gmail.com", t.links[3]],
-            ].map(([href, label]) => <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" key={href}>{label}<span>↗</span></a>)}</div>
-          </section>
-        )}
-
-        {page === "characterize" && (
-          <CharacterizationWorkspace language={language} onStrategyChange={(key, value) => {
-            setCharacterization((current) => ({ ...current, [key]: value } as Characterization));
-            if (key === "focus") setActiveResearch(value as Focus);
-          }} />
-        )}
-      </div>
-
-      <footer className="page-footer">
-        {page === "home" ? <span aria-hidden="true" /> : <a href={hrefFor(previousPage)}>← {t.back}</a>}
-        <span>{t.name} · 2026</span>
-        {page !== "characterize" ? <a className="footer-next" href={hrefFor(nextPage)}>{page === "profile" ? t.characterize : t.next} <span>↗</span></a> : <a href={hrefFor("home")}>{rtl ? "חזרה לתצוגת האתר" : "Back to site preview"} ↗</a>}
-      </footer>
-    </main>
-  );
+  return <main className="site" data-page={page} dir={rtl ? "rtl" : "ltr"}>
+    <header className="header"><nav aria-label={rtl ? "ניווט ראשי" : "Main navigation"}>{(["home", "about", "research", "projects", "lab", "publications"] as Page[]).map((target, index) => <a href={hrefFor(target)} className={page === target ? "active" : ""} aria-current={page === target ? "page" : undefined} key={target}><span className="nav-symbol">{["⌂", "□", "○", "↗", "＋", "≡"][index]}</span><span>{t.nav[target as keyof typeof t.nav]}</span></a>)}</nav><div className="header-actions"><button type="button" className="language-toggle" aria-label={rtl ? "Switch to English" : "מעבר לעברית"} onClick={() => setLanguage(language === "he" ? "en" : "he")}>{rtl ? "EN" : "עב"}</button><a className={page === "contact" ? "contact-trigger active" : "contact-trigger"} href={hrefFor("contact")}>{t.contact}</a><a className={page === "characterize" ? "studio-trigger active" : "studio-trigger"} aria-current={page === "characterize" ? "page" : undefined} href={hrefFor("characterize")}>{t.characterize}<span aria-hidden="true">+</span></a></div></header>
+    <div className="notice"><span>{t.notice}</span><div className="route-progress" aria-label={`${routeLabel}, ${currentIndex + 1} / ${pageOrder.length}`}><span>{String(currentIndex + 1).padStart(2, "0")} / {String(pageOrder.length).padStart(2, "0")}</span><i aria-hidden="true"><b style={{ width: `${((currentIndex + 1) / pageOrder.length) * 100}%` }} /></i><span>{routeLabel}</span></div></div>
+    <div className="page-stage" key={page} ref={stageRef} tabIndex={-1} aria-live="polite">
+      {page === "home" && <section className="screen home-screen"><div className="portrait"><Image src="/lior-noy.jpg" alt={t.name} fill sizes="(max-width: 720px) 30vw, 220px" priority /></div><div className="identity-block"><h1>{t.name}</h1><p>{t.role}</p></div><div className="home-copy"><p className="lead">{t.homeLead[characterization.audience]}</p>{detailed && <p>{t.homeBody}</p>}<div className="home-actions"><a href={hrefFor("research")} className="text-link">{t.primaryCta} ↗</a><a href={hrefFor("contact")}>{t.podcast} →</a></div></div><aside className="folio"><span>LIOR NOY</span><span>CREATIVE ACTION LAB</span><span>ONO ACADEMIC COLLEGE</span><span>2026</span></aside><div className="interaction-axis" aria-hidden="true"><span>MOVE</span><i /><span>LISTEN</span><i /><span>CREATE</span></div></section>}
+      {page === "about" && <section className="screen content-screen about-screen"><div className="page-kicker"><span>01</span><p>{t.aboutKicker}</p></div><div className="page-title"><h1>{t.aboutTitle}</h1><p>{t.aboutBody}</p>{detailed && <p>{t.aboutBody2}</p>}</div><blockquote>{t.question}</blockquote><div className="value-list">{t.values.map(([title, body], index) => <article key={title}><span>0{index + 1}</span><h2>{title}</h2><p>{body}</p></article>)}</div><div className="profile-strip"><h2>{t.profileTitle}</h2><div className="timeline">{t.positions.map(([period, position, institution]) => <div key={`${period}-${position}`}><span>{period}</span><p>{position}</p><small>{institution}</small></div>)}</div></div></section>}
+      {page === "research" && <section className="screen content-screen research-screen"><div className="page-kicker"><span>02</span><p>{t.researchKicker}</p></div><div className="page-title"><h1>{t.researchTitle}</h1><p>{t.researchIntro}</p></div><div className="research-browser"><div className="research-list" role="tablist">{researchItems.map((item) => <button type="button" role="tab" aria-controls="research-panel" aria-selected={activeResearch === item.id} className={activeResearch === item.id ? "active" : ""} key={item.id} onClick={() => { setActiveResearch(item.id); setCharacterization((current) => ({ ...current, focus: item.id })); }}><span>{item.index}</span><b>{rtl ? item.titleHe : item.titleEn}</b><i>{activeResearch === item.id ? "—" : "+"}</i></button>)}</div><article className="research-detail" id="research-panel" role="tabpanel" key={currentResearch.id}><div className="detail-meta"><span>{currentResearch.index}</span><span>CREATIVE ACTION LAB</span></div><h2>{rtl ? currentResearch.questionHe : currentResearch.questionEn}</h2><p>{rtl ? currentResearch.textHe : currentResearch.textEn}</p><ul>{currentResearch.terms.map((term) => <li key={term}>{term}</li>)}</ul></article></div><div className="theatre-note"><span>THEATRE LAB · 2013—2016</span><h2>{rtl ? "הבמה כמערכת מודל" : "The stage as a model system"}</h2><p>{rtl ? "מעבדת התיאטרון במכון ויצמן חיברה אמנויות במה, מדעי ההתנהגות, מדעי המחשב ופיזיקה כדי לחקור אימפרוביזציה משותפת, יצירתיות ופעולה דרמטית." : "The Weizmann Theatre Lab combined performing arts, behavioral science, computer science and physics to study joint improvisation, creativity and dramatic action."}</p><a href="https://www.weizmann.ac.il/mcb/alon/theatre-lab" target="_blank" rel="noreferrer">{t.source} ↗</a></div></section>}
+      {page === "projects" && <section className="screen content-screen projects-screen"><div className="page-kicker"><span>03</span><p>{t.projectsKicker}</p></div><div className="page-title"><h1>{t.projectsTitle}</h1><p>{t.projectsIntro}</p></div><div className="projects-grid">{projects.map(([index, titleEn, titleHe, metaEn, metaHe, textEn, textHe]) => <article key={index}><span>{index}</span><small>{rtl ? metaHe : metaEn}</small><h2>{rtl ? titleHe : titleEn}</h2><p>{rtl ? textHe : textEn}</p></article>)}</div></section>}
+      {page === "lab" && <section className="screen content-screen lab-screen"><div className="page-kicker"><span>04</span><p>{t.labKicker}</p></div><div className="page-title"><h1>{t.labTitle}</h1><p>{t.labNote}</p></div><div className="people-groups"><section><h2>{t.currentStudents}</h2>{people.current.map(([name, role]) => <article key={name}><strong>{name}</strong><p>{role}</p></article>)}</section><section><h2>{t.alumni}</h2>{people.alumni.map(([name, role]) => <article key={name}><strong>{name}</strong><p>{role}</p></article>)}</section></div><div className="collaborator-list"><h2>{t.collaborators}</h2>{people.collaborators.map(([name, institution]) => <div key={name}><strong>{name}</strong><span>{institution}</span></div>)}</div></section>}
+      {page === "publications" && <section className="screen content-screen publications-screen"><div className="page-kicker"><span>05</span><p>{t.publicationsKicker}</p></div><div className="page-title"><h1>{t.publicationsTitle}</h1><p>{t.publicationsIntro}</p></div><div className="publication-list">{publications.map(([year, title, venue], index) => <article className="publication" key={title}><span>{year}</span><h2>{title}</h2><small>{venue}</small><em>0{index + 1}</em></article>)}</div><a className="scholar-link" href="https://scholar.google.com/citations?user=-w05QJkAAAAJ&hl=en" target="_blank" rel="noreferrer">{t.fullList} ↗</a></section>}
+      {page === "contact" && <section className="screen content-screen contact-screen"><div className="page-kicker"><span>06</span><p>{t.contactKicker}</p></div><div className="page-title"><h1>{t.contactTitle}</h1><p>{t.contactIntro}</p></div><div className="contact-cards"><article><span>01</span><h2>{t.podcastTitle}</h2><p>{t.podcastBody}</p><small>{t.pending}</small></article><article><span>02</span><h2>{t.collaborationTitle}</h2><p>{t.collaborationBody}</p><small>{t.pending}</small></article><article><span>03</span><h2>{t.leadershipTitle}</h2><p>{t.leadershipBody}</p><a href="https://hfp-consulting.com/" target="_blank" rel="noreferrer">HFP Consulting ↗</a></article></div></section>}
+      {page === "characterize" && <CharacterizationWorkspace language={language} onStrategyChange={(key, value) => { setCharacterization((current) => ({ ...current, [key]: value } as Characterization)); if (key === "focus") setActiveResearch(value as Focus); }} />}
+    </div>
+    <footer className="page-footer">{page === "home" ? <span aria-hidden="true" /> : <a href={hrefFor(previousPage)}>← {t.back}</a>}<span>{t.name} · 2026</span>{page !== "characterize" ? <a className="footer-next" href={hrefFor(nextPage)}>{page === "contact" ? t.characterize : t.next} <span>↗</span></a> : <a href={hrefFor("home")}>{rtl ? "חזרה לתצוגת האתר" : "Back to site preview"} ↗</a>}</footer>
+  </main>;
 }
