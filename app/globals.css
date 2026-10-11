@@ -49,8 +49,8 @@ img { display: block; width: 100%; }
 .header nav a:hover .nav-symbol { transform: scale(.84) rotate(-4deg); }
 .header nav a.active .nav-symbol { color: var(--accent); }
 .header nav a.active::after { content:""; position:absolute; bottom:-14px; width:100%; height:3px; background:var(--accent); }
-.header-actions { display: flex; gap: 7px; }
-.header-actions button,.header-actions a { min-height: 34px; padding: 0 11px; border: 1px solid var(--black); background: var(--white); cursor: pointer; font-size: 10px; transition:background .2s,color .2s,transform .2s; }
+.header-actions { display: flex; gap: 7px; align-items:center; }
+.header-actions button,.header-actions a { height: 34px; display:inline-flex; align-items:center; justify-content:center; line-height:1; padding: 0 11px; border: 1px solid var(--black); background: var(--white); cursor: pointer; font-size: 10px; transition:background .2s,color .2s,transform .2s; }
 .header-actions button:hover,.header-actions a:hover,.header-actions a.active { background: var(--black); color: var(--white); transform:translateY(-2px); }
 .language-toggle { min-width:38px; }
 .studio-trigger { display:flex; align-items:center; gap:18px; }

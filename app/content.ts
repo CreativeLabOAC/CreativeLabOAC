@@ -42,7 +42,7 @@ export const copy = {
     source: "Source", back: "Back", next: "Next page", pending: "Material pending",
   },
   he: {
-    name: "המעבדה לפעולה יצירתית", role: "בהובלת ד״ר ליאור נוי · הקריה האקדמית אונו",
+    name: "Creative Action Lab", role: "בהובלת ד״ר ליאור נוי · הקריה האקדמית אונו",
     nav: { home: "ראשי", about: "אודות", research: "מחקר", projects: "פרויקטים", lab: "אנשים", publications: "פרסומים", podcast: "פודקאסט", contact: "קשר" }, notice: "Creative Action Lab · הקריה האקדמית אונו", characterize: "מצב אפיון",
     homeLead: { public: "חוקר כיצד אנשים מגלים דפוסים חדשים באמצעות אינטראקציה.", academic: "חוקר פעולה יצירתית משותפת באמצעות ניסויים התנהגותיים, מודלים חישוביים ואימפרוביזציה.", organizations: "חוקר כיצד אנשים מקשיבים, מחפשים ויוצרים יחד." },
     homeBody: "ד״ר ליאור נוי הוא מרצה בכיר בקריה האקדמית אונו ומוביל את Creative Action Lab. עבודתו מחברת בין מדעי הקוגניציה, מדעי המחשב ואמנויות הבמה.", primaryCta: "למחקר", podcast: "פודקאסט בתנועה", contact: "יצירת קשר",
