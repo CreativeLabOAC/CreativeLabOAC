@@ -1,5 +1,23 @@
 # vinext-starter
 
+## GitHub Pages
+
+The `Deploy GitHub Pages` workflow builds a static Next.js export and publishes
+it on pushes to `main`. The repository owner must first select **GitHub Actions**
+under **Settings → Pages → Build and deployment → Source**.
+
+The intended URL is https://creativelaboac.github.io/CreativeLabOAC/.
+Hash routes, language switching, and the browser-local questionnaire work without
+a server. Cloudflare and ChatGPT server integrations are not part of this export.
+
+To validate the export in PowerShell:
+
+```powershell
+$env:GITHUB_PAGES = "true"
+$env:NEXT_PUBLIC_BASE_PATH = "/CreativeLabOAC"
+npm run build:pages
+```
+
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
 Drizzle support.

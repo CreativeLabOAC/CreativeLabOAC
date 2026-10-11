@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  ...(process.env.GITHUB_PAGES === "true" ? {
+    output: "export",
+    basePath: "/CreativeLabOAC",
+    images: { unoptimized: true },
+    typescript: { tsconfigPath: "tsconfig.pages.json" },
+  } : {}),
 };
 
 export default nextConfig;

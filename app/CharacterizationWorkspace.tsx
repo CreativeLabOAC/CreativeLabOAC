@@ -74,7 +74,6 @@ const content = {
       action: "הפעולה המרכזית שהמבקר צריך לבצע…",
       positioning: "אני חוקר / יוצר / מרצה ש…",
       distinction: "החיבור הייחודי בין…",
-      distinction: "החיבור הייחודי בין…",
       proof: "רשימת עובדות, הישגים ומקורות שאפשר להציג…",
       avoid: "תוכן שדורש אישור או שלא נכון לפרסם…",
       notes: "נקודות להמשך הדיון…",
@@ -132,7 +131,6 @@ const content = {
       goal: "For example: create a clear professional picture connecting research, creativity and application…",
       action: "The primary action a visitor should take…",
       positioning: "I am a researcher / creator / lecturer who…",
-      distinction: "The distinctive connection between…",
       distinction: "The distinctive connection between…",
       proof: "Facts, achievements and sources that can be shown…",
       avoid: "Content that needs approval or should not be published…",
@@ -239,7 +237,7 @@ export default function CharacterizationWorkspace({ language, onStrategyChange }
   }), [t]);
   const optionSets = t.options as Record<string, readonly (readonly [string, string])[]>;
   const optionLabel = (key: string, value: string) => value === "other" ? (answers[`${key}Other` as keyof Answers] as string || t.other) : optionSets[key]?.find(([id]) => id === value)?.[1] ?? value;
-  const summaryLines = (Object.keys(labels) as (keyof Answers)[]).map((key) => {
+  const summaryLines = (Object.keys(labels) as (keyof typeof labels)[]).map((key) => {
     const raw = answers[key];
     const value = key === "sections"
       ? [...answers.sections.map((item) => optionLabel("sections", item)), ...answers.sectionOthers.filter((item) => item.trim())].join(", ")
