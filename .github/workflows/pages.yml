@@ -24,10 +24,18 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Determine site URL and asset path
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SITE_URL=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .html_url)
+          BASE_PATH=$(node -e 'console.log(new URL(process.argv[1]).pathname.replace(/\/$/, ""))' "$SITE_URL")
+          echo "NEXT_PUBLIC_SITE_URL=$SITE_URL" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_BASE_PATH=$BASE_PATH" >> "$GITHUB_ENV"
       - run: npm run build:pages
         env:
           GITHUB_PAGES: "true"
-          NEXT_PUBLIC_BASE_PATH: /CreativeLabOAC
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

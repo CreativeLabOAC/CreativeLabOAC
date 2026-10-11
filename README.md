@@ -1,5 +1,28 @@
 # vinext-starter
 
+## Updating approved content
+
+`app/content.ts` contains bilingual research, project, people and biography text.
+`app/resources.ts` contains approved resource links, DOI records, podcast episodes
+and events. Missing CV, Scholar, email and podcast links remain explicit empty
+values: add approved values there rather than inserting guessed addresses.
+Events and episodes require both English and Hebrew text. Google Docs can be used
+as an editorial source; updates are copied into these records and reviewed before
+publication. There is no automatic Google Docs synchronization.
+
+## Moving to a custom domain
+
+Add the purchased domain under repository Settings → Pages and configure the DNS
+records GitHub provides. The deployment workflow reads the Pages URL and derives
+the asset base path automatically: a custom domain uses an empty base path, while
+the repository URL uses `/CreativeLabOAC`. Trigger the workflow again after the
+domain is configured. No application rewrite is needed. For another static host,
+build with `GITHUB_PAGES=true`, `NEXT_PUBLIC_BASE_PATH` set to the host path (empty
+for a root domain), and `NEXT_PUBLIC_SITE_URL` set to the full public URL. Deploy
+the `out` directory. Domain purchase and DNS configuration are separate steps.
+
+Validate the static build with `node --test tests/pages-export.test.mjs`.
+
 ## GitHub Pages
 
 The `Deploy GitHub Pages` workflow builds a static Next.js export and publishes

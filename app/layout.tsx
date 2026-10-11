@@ -7,14 +7,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = isGitHubPages ? new Headers() : await headers();
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
-  const origin = isGitHubPages ? "https://creativelaboac.github.io/CreativeLabOAC/" : `${protocol}://${host}`;
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? (isGitHubPages ? "https://creativelaboac.github.io/CreativeLabOAC/" : `${protocol}://${host}`);
 
   return {
     metadataBase: new URL(origin),
     title: "Dr. Lior Noy — Creative Action Lab",
     description:
       "Creative joint action through behavioral experiments, computational models and improvisation.",
-    icons: { icon: isGitHubPages ? "/CreativeLabOAC/favicon.svg" : "/favicon.svg" },
+    icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? (isGitHubPages ? "/CreativeLabOAC" : "")}/favicon.svg` },
     openGraph: {
       title: "Dr. Lior Noy — Creative Action Lab",
       description:
